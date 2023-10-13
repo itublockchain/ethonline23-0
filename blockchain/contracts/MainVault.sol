@@ -54,4 +54,21 @@ contract Vault {
     function updateNftHolders(address[] calldata _apeNftHolders) external  {
         apeNftHolders = _apeNftHolders;
     }
+    function getBalance() public view returns (uint256) {
+        return apeCoin.balanceOf(address(this));
+    }
+    
+    function getScore(address user) public view returns (uint256) {
+        return scores[user];
+    }
+
+    function getNftHolderAt(uint256 index) public view returns (address) {
+        require(index < apeNftHolders.length, "Index out of bounds");
+        return apeNftHolders[index];
+    }
+    
+    function getNftHoldersCount() public view returns (uint256) {
+        return apeNftHolders.length;
+    }
+
 }
