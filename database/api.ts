@@ -1,5 +1,5 @@
 import express from 'express';
-import { insert, batchProcess , query, update, setUpDB } from './db';
+import { insert , query, update, setUpDB } from './db';
 import { Database } from '@tableland/sdk';
 
 export type Request = express.Request;
@@ -9,7 +9,8 @@ let db: Database;
 const app = express()
 const port = 3002
 
-let personalInfos: string, scoreboard: string;
+let personalInfos: string = "personalinfos_80001_7714";
+let scoreboard: string = "game1_80001_7723";
 
 const setup = async () => {
     db = await setUpDB();
@@ -48,7 +49,6 @@ app.get('/api/scores', async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error getting scoreboard' });
     }
 });
-// this is very insecure, we are aware of that
 app.get('/api/checkScore', async (req: Request, res: Response) => {
     const gameName = req.query.gameName;
     const address = req.query.address;
@@ -61,6 +61,7 @@ app.get('/api/checkScore', async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error checking score' });
     }
 });
+// these are very insecure, we are aware of that
 app.get('/api/setScore', async (req: Request, res: Response) => {
     const gameName = req.query.gameName;
     const address = req.query.address;

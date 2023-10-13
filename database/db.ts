@@ -8,7 +8,7 @@ const privateKey = process.env.PRIVATE_KEY;
 
 export const setUpDB = async () => {
     const wallet = new Wallet(privateKey!);
-    const provider = new providers.JsonRpcProvider(process.env.TABLELAND_RPC); // Local tableland (hardhat) node
+    const provider = new providers.JsonRpcProvider(process.env.TABLELAND_RPC); // Local tableland or polygonMumbai
     const baseSigner = wallet.connect(provider);
     const signer = new NonceManager(baseSigner); // Using nonceManager to handle local tableland node
   
@@ -17,7 +17,8 @@ export const setUpDB = async () => {
 
     return db
 }
-
+/*
+// Now we are creating tables via Tableland Studio
 export const createScoreboardTable = async (db: Database, gameName: string) => {
     console.log("creating table for game: ", gameName);
     const { meta: createScoreboard } = await db.prepare(
@@ -48,7 +49,7 @@ export const createPersonalInfoTable = async (db: Database) => {
 
     return personalInfos;
 }
-
+*/
 export const insert = async (
     db: Database,
     statement: string,
@@ -96,20 +97,5 @@ export const update = async (
     } catch (e) {
         console.log("error:" + e);
         return "error";
-    }
-}
-
-export const batchProcess = async (
-    db: Database,
-    statements: Statement[]
-) => {
-    try {
-        const results = await db.batch(statements);
-
-        return results;
-    } catch (e) {
-        console.log("error:" + e);
-        
-        return false;
     }
 }
