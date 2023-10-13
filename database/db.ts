@@ -4,11 +4,11 @@ import { NonceManager } from "@ethersproject/experimental";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const privateKey = process.env.PRIVATE_KEY;
+const privateKey = process.env.TABLELAND_PRIVATE_KEY;
 
 export const setUpDB = async () => {
     const wallet = new Wallet(privateKey!);
-    const provider = new providers.JsonRpcProvider(process.env.TABLELAND_RPC); // Local tableland or polygonMumbai
+    const provider = new providers.JsonRpcProvider(process.env.MUMBAI_RPC); // Local tableland or polygonMumbai
     const baseSigner = wallet.connect(provider);
     const signer = new NonceManager(baseSigner); // Using nonceManager to handle local tableland node
   

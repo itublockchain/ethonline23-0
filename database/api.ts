@@ -17,7 +17,7 @@ const setup = async () => {
 }
 setup();
 
-app.get('/api/personalInfos', async (req: Request, res: Response) => {
+app.get('/api/getPersonalInfos', async (req: Request, res: Response) => {
     try {
         let statement =  `SELECT * FROM ${personalInfos}`;
         const results = await query(db, statement);
@@ -27,7 +27,7 @@ app.get('/api/personalInfos', async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error getting personal informations' });
     }
 });
-app.get('/api/personalInfo', async (req: Request, res: Response) => {
+app.get('/api/getPersonalInfo', async (req: Request, res: Response) => {
     const address = req.query.address;
     try {
         let statement =  `SELECT * FROM ${personalInfos} WHERE id = "${address}"`;
@@ -38,7 +38,7 @@ app.get('/api/personalInfo', async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error getting personal information' });
     }
 });
-app.get('/api/scores', async (req: Request, res: Response) => {
+app.get('/api/getScores', async (req: Request, res: Response) => {
     const gameName = req.query.gameName;
     try {
         let statement =  `SELECT * FROM ${scoreboard} WHERE gameName = "${gameName}"`;
@@ -49,7 +49,7 @@ app.get('/api/scores', async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error getting scoreboard' });
     }
 });
-app.get('/api/checkScore', async (req: Request, res: Response) => {
+app.get('/api/getScore', async (req: Request, res: Response) => {
     const gameName = req.query.gameName;
     const address = req.query.address;
     try {
@@ -86,6 +86,18 @@ app.get('/api/updateScore', async (req: Request, res: Response) => {
     } catch (e) {
         console.log("Error updating score: " + e);
         res.status(500).json({ error: 'Error updating score' });
+    }
+});
+app.get('/api/setBalance', async (req: Request, res: Response) => {
+    const address = req.query.address;
+    const balance = req.query.balance;
+    try {
+        let statement =  `UPDATE ${personalInfos} SET balance = ${balance} WHERE id = "${address}"`;
+        const results = await update(db, statement, []); // pass null if there are no parameters
+        res.json(results);
+    } catch (e) {
+        console.log("Error setting balance: " + e);
+        res.status(500).json({ error: 'Error setting balance' });
     }
 });
 app.listen(port, () => {
