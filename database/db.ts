@@ -1,8 +1,7 @@
 import { Database, Statement } from "@tableland/sdk";
 import { Wallet, providers } from "ethers";
 import { NonceManager } from "@ethersproject/experimental";
-import * as dotenv from "dotenv";
-dotenv.config();
+require("dotenv").config()
 
 const privateKey = process.env.TABLELAND_PRIVATE_KEY;
 
