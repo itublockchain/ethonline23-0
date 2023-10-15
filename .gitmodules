@@ -1,0 +1,3 @@
+[submodule "aa-stripe-service"]
+	path = aa-stripe-service
+	url = https://github.com/5afe/aa-stripe-service.git

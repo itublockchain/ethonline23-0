@@ -2,6 +2,12 @@ import express from 'express';
 import { insert , query, update, setUpDB } from './db';
 import { Database } from '@tableland/sdk';
 
+const stripePack = new StripePack({
+    stripePublicKey:'pk_test_51O0x1EJ2fec4bVWHcpuPVoVP4LQNt5jPdQ6vo06DypOEIG7Jhg23RdIf4FCUYtDLoX9WJQMLOodFdCygtM0gu7Vg00og0zdwna',
+    onRampBackendUrl: 'http://localhost:3001'
+});
+await stripePack.init();
+
 export type Request = express.Request;
 export type Response = express.Response;
 
