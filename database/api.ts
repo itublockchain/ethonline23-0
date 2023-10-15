@@ -2,18 +2,14 @@ import express from 'express';
 import { insert , query, update, setUpDB } from './db';
 import { Database } from '@tableland/sdk';
 
-const stripePack = new StripePack({
-    stripePublicKey:'pk_test_51O0x1EJ2fec4bVWHcpuPVoVP4LQNt5jPdQ6vo06DypOEIG7Jhg23RdIf4FCUYtDLoX9WJQMLOodFdCygtM0gu7Vg00og0zdwna',
-    onRampBackendUrl: 'http://localhost:3001'
-});
-await stripePack.init();
-
 export type Request = express.Request;
 export type Response = express.Response;
 
 let db: Database;
 const app = express()
 const port = 3002
+app.use(express.static("public"));
+app.use(express.json());
 
 let personalInfos: string = "personalinfos_80001_7714";
 let scoreboard: string = "game1_80001_7723";
@@ -111,6 +107,7 @@ app.get('/api/setBalance', async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Error setting balance' });
     }
 });
+
 app.listen(port, () => {
     console.log(`API listening on port ${port}`)
   });

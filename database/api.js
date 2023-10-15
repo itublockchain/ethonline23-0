@@ -14,9 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const db_1 = require("./db");
+const safeOnRamp = require("@safe-global/onramp-kit");
+const stripe = safeOnRamp('sk_test_51O0x1EJ2fec4bVWHCHtf3Ep1iTZOKtpedRDYsLpy1dEfJBVdPc2xWNunaAWqM4EWyobmb0vsePnAS8UEJjMTa8NJ001Yl6V3pX');
+const OnrampSessionResource = safeOnRamp.StripeResource.extend({
+    create: safeOnRamp.StripeResource.method({
+        method: 'POST',
+        path: 'crypto/onramp_sessions',
+    }),
+});
 let db;
 const app = (0, express_1.default)();
 const port = 3002;
+app.use(express_1.default.static("public"));
+app.use(express_1.default.json());
 let personalInfos = "personalinfos_80001_7714";
 let scoreboard = "game1_80001_7723";
 const setup = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -117,6 +127,22 @@ app.get('/api/setBalance', (req, res) => __awaiter(void 0, void 0, void 0, funct
         console.log("Error setting balance: " + e);
         res.status(500).json({ error: 'Error setting balance' });
     }
+}));
+// Safe OnRampKit import
+app.post("/create-onramp-session", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { transaction_details } = req.body;
+    // Create an OnrampSession with the order amount and currency
+    const onrampSession = yield new OnrampSessionResource(stripe).create({
+        transaction_details: {
+            destination_currency: transaction_details["destination_currency"],
+            destination_exchange_amount: transaction_details["destination_exchange_amount"],
+            destination_network: transaction_details["destination_network"],
+        },
+        customer_ip_address: req.socket.remoteAddress,
+    });
+    res.send({
+        clientSecret: onrampSession.client_secret,
+    });
 }));
 app.listen(port, () => {
     console.log(`API listening on port ${port}`);

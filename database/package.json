@@ -4,6 +4,9 @@
   "main": "db.ts",
   "license": "MIT",
   "dependencies": {
+    "@safe-global/onramp-kit": "^1.4.0",
+    "@stripe/crypto": "^0.0.4",
+    "@stripe/stripe-js": "^2.1.7",
     "@tableland/sdk": "4.5.2",
     "express": "^4.18.2"
   }
