@@ -6,19 +6,17 @@ import { StripeSession, StripePack } from '@safe-global/onramp-kit'
 
 const isSessionValid = (sessionId: string) => sessionId.length === 28
 
-export default function Stripe() {
-    const stripePublicKey = "pk_test_51O0x1EJ2fec4bVWHcpuPVoVP4LQNt5jPdQ6vo06DypOEIG7Jhg23RdIf4FCUYtDLoX9WJQMLOodFdCygtM0gu7Vg00og0zdwna"
-    const onRampBackendUrl = "http://localhost:3001"
-    const [walletAddress, setWalletAddress] = useState<string>('')
-    const [sessionId, setSessionId] = useState<string>('')
-    const [stripePack, setStripePack] = useState<StripePack>()
-    const stripeRootRef = useRef<HTMLDivElement>(null)
+function Stripe() {
+  const [walletAddress, setWalletAddress] = useState<string>('')
+  const [sessionId, setSessionId] = useState<string>('')
+  const [stripePack, setStripePack] = useState<StripePack>()
+  const stripeRootRef = useRef<HTMLDivElement>(null)
 
-    const handleCreateSession = async () => {
-        if (!isSessionValid(sessionId) && !ethers.utils.isAddress(walletAddress)) return
+  const handleCreateSession = async () => {
+    if (!isSessionValid(sessionId) && !ethers.utils.isAddress(walletAddress)) return
 
-        if (stripeRootRef.current) {
-            stripeRootRef.current.innerHTML = ''
+    if (stripeRootRef.current) {
+      stripeRootRef.current.innerHTML = ''
     }
 
     const sessionData = (await stripePack?.open({
@@ -42,7 +40,7 @@ export default function Stripe() {
       console.log('UI loaded')
     })
 
-    stripePack?.subscribe('onramp_session_updated', (e: any) => {
+    stripePack?.subscribe('onramp_session_updated', (e) => {
       console.log('Session Updated', e.payload)
     })
 
@@ -52,8 +50,8 @@ export default function Stripe() {
   useEffect(() => {
     ;(async () => {
       const pack = new StripePack({
-        stripePublicKey,
-        onRampBackendUrl
+        stripePublicKey: 'pk_test_51O0x1EJ2fec4bVWHcpuPVoVP4LQNt5jPdQ6vo06DypOEIG7Jhg23RdIf4FCUYtDLoX9WJQMLOodFdCygtM0gu7Vg00og0zdwna',
+        onRampBackendUrl: 'localhost:3001'
       })
 
       await pack.init()
@@ -94,3 +92,5 @@ export default function Stripe() {
     </Grid>
   )
 }
+
+export default Stripe
