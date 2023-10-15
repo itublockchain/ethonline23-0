@@ -3,8 +3,8 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 import { SafeThemeProvider } from '@safe-global/safe-react-components'
 
-import Stripe from '../components/onRampKitComponent'
-import App from './page'
+import Stripe from './onRampKitComponent'
+import App from '../app/page'
 
 import './index.css'
 
