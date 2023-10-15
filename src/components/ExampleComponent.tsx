@@ -126,6 +126,7 @@ export default  function ExampleComponent() {
 	  return (
 		<div>
 		  <p>Example Component</p>
+		  <button onClick={login}>LOGIN</button>
 		  {/* Diğer UI elemanları ve duruma bağlı renderlar burada olacak */}
 		</div>
 	  );
