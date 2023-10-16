@@ -1,5 +1,10 @@
-import Image from "next/image"
+import { ExampleComponent } from "@/components"
+import {Stripe} from "@/components"
 
 export default function Home() {
-	return <div></div>
+	return <div>
+		<ExampleComponent />
+		<Stripe />
+	</div>
+
 }

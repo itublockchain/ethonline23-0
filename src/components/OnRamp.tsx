@@ -50,8 +50,8 @@ function Stripe() {
   useEffect(() => {
     ;(async () => {
       const pack = new StripePack({
-        stripePublicKey: 'pk_test_51O0x1EJ2fec4bVWHcpuPVoVP4LQNt5jPdQ6vo06DypOEIG7Jhg23RdIf4FCUYtDLoX9WJQMLOodFdCygtM0gu7Vg00og0zdwna',
-        onRampBackendUrl: 'localhost:3001'
+        stripePublicKey: "pk_test_51MZbmZKSn9ArdBimSyl5i8DqfcnlhyhJHD8bF2wKrGkpvNWyPvBAYtE211oHda0X3Ea1n4e9J9nh2JkpC7Sxm5a200Ug9ijfoO",
+        onRampBackendUrl: "https://aa-stripe.safe.global"
       })
 
       await pack.init()
