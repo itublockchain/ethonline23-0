@@ -1,44 +1,41 @@
 // https://github.com/safe-global/safe-core-sdk/blob/main/packages/auth-kit/example/src/App.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 import {
 	ADAPTER_EVENTS,
 	CHAIN_NAMESPACES,
 	SafeEventEmitterProvider,
 	UserInfo,
 	WALLET_ADAPTERS,
-} from "@web3auth/base";
-import { Box, Divider, Grid, Typography } from "@mui/material";
-import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
-import { Web3AuthOptions } from "@web3auth/modal";
+} from "@web3auth/base"
+import { Box, Divider, Grid, Typography } from "@mui/material"
+import { OpenloginAdapter } from "@web3auth/openlogin-adapter"
+import { Web3AuthOptions } from "@web3auth/modal"
 
-import AppBar from "./AppBar";
+import AppBar from "./AppBar"
 
-import {
-	Web3AuthModalPack,
-	Web3AuthEventListener,
-} from "@safe-global/auth-kit";
+import { Web3AuthModalPack, Web3AuthEventListener } from "@safe-global/auth-kit"
 
-import type { AuthKitSignInData } from "@safe-global/auth-kit/dist/src/types";
-import { EthHashInfo } from "@safe-global/safe-react-components";
+import type { AuthKitSignInData } from "@safe-global/auth-kit/dist/src/types"
+import { EthHashInfo } from "@safe-global/safe-react-components"
 
 // https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments
 
 const connectedHandler: Web3AuthEventListener = (data) =>
-	console.log("CONNECTED", data);
+	console.log("CONNECTED", data)
 const disconnectedHandler: Web3AuthEventListener = (data) =>
-	console.log("DISCONNECTED", data);
+	console.log("DISCONNECTED", data)
 
 export default function ExampleComponent() {
 	const [web3AuthModalPack, setWeb3AuthModalPack] =
-		useState<Web3AuthModalPack>();
+		useState<Web3AuthModalPack>()
 	const [safeAuthSignInResponse, setSafeAuthSignInResponse] =
-		useState<AuthKitSignInData | null>(null);
-	const [userInfo, setUserInfo] = useState<Partial<UserInfo>>();
+		useState<AuthKitSignInData | null>(null)
+	const [userInfo, setUserInfo] = useState<Partial<UserInfo>>()
 	const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(
 		null
-	);
+	)
 	useEffect(() => {
-		(async () => {
+		;(async () => {
 			const options: Web3AuthOptions = {
 				clientId:
 					"BMVbCJGKTNafy5v4B8zf6W87bLvV53uP4ZAF5b7u1eKjBJ9hO8tjCrec2PsI5bwPpqqG0_gI6ZtMl1s624Dvo5s",
@@ -52,16 +49,15 @@ export default function ExampleComponent() {
 					theme: "dark",
 					loginMethodsOrder: ["google", "facebook"],
 				},
-			};
+			}
 
 			const modalConfig = {
-			
 				[WALLET_ADAPTERS.METAMASK]: {
 					label: "metamask",
 					showOnDesktop: true,
 					showOnMobile: false,
 				},
-			};
+			}
 
 			const openloginAdapter = new OpenloginAdapter({
 				loginSettings: {
@@ -73,68 +69,68 @@ export default function ExampleComponent() {
 						name: "Safe",
 					},
 				},
-			});
+			})
 
 			const web3AuthModalPack = new Web3AuthModalPack({
 				txServiceUrl: "https://safe-transaction-goerli.safe.global",
-			});
+			})
 
 			await web3AuthModalPack.init({
 				options,
 				adapters: [openloginAdapter],
 				modalConfig,
-			});
+			})
 
-			web3AuthModalPack.subscribe(ADAPTER_EVENTS.CONNECTED, connectedHandler);
+			web3AuthModalPack.subscribe(ADAPTER_EVENTS.CONNECTED, connectedHandler)
 
 			web3AuthModalPack.subscribe(
 				ADAPTER_EVENTS.DISCONNECTED,
 				disconnectedHandler
-			);
+			)
 
-			setWeb3AuthModalPack(web3AuthModalPack);
+			setWeb3AuthModalPack(web3AuthModalPack)
 
 			return () => {
 				web3AuthModalPack.unsubscribe(
 					ADAPTER_EVENTS.CONNECTED,
 					connectedHandler
-				);
+				)
 				web3AuthModalPack.unsubscribe(
 					ADAPTER_EVENTS.DISCONNECTED,
 					disconnectedHandler
-				);
-			};
-		})();
-	}, []);
+				)
+			}
+		})()
+	}, [])
 	useEffect(() => {
 		if (web3AuthModalPack && web3AuthModalPack.getProvider()) {
-			(async () => {
-				await login();
-			})();
+			;(async () => {
+				await login()
+			})()
 		}
-	}, [web3AuthModalPack]);
+	}, [web3AuthModalPack])
 
 	const login = async () => {
-		if (!web3AuthModalPack) return;
+		if (!web3AuthModalPack) return
 
-		const signInInfo = await web3AuthModalPack.signIn();
-		console.log("SIGN IN RESPONSE: ", signInInfo);
+		const signInInfo = await web3AuthModalPack.signIn()
+		console.log("SIGN IN RESPONSE: ", signInInfo)
 
-		const userInfo = await web3AuthModalPack.getUserInfo();
-		console.log("USER INFO: ", userInfo);
+		const userInfo = await web3AuthModalPack.getUserInfo()
+		console.log("USER INFO: ", userInfo)
 
-		setSafeAuthSignInResponse(signInInfo);
-		setUserInfo(userInfo || undefined);
-		setProvider(web3AuthModalPack.getProvider() as SafeEventEmitterProvider);
-	};
+		setSafeAuthSignInResponse(signInInfo)
+		setUserInfo(userInfo || undefined)
+		setProvider(web3AuthModalPack.getProvider() as SafeEventEmitterProvider)
+	}
 	const logout = async () => {
-		if (!web3AuthModalPack) return;
+		if (!web3AuthModalPack) return
 
-		await web3AuthModalPack.signOut();
+		await web3AuthModalPack.signOut()
 
-		setProvider(null);
-		setSafeAuthSignInResponse(null);
-	};
+		setProvider(null)
+		setSafeAuthSignInResponse(null)
+	}
 	return (
 		<>
 			<AppBar
@@ -150,12 +146,6 @@ export default function ExampleComponent() {
 							Owner account
 						</Typography>
 						<Divider sx={{ my: 3 }} />
-						<EthHashInfo
-							address={safeAuthSignInResponse.eoa}
-							showCopyButton
-							showPrefix
-							prefix={getPrefix("0x5")}
-						/>
 					</Grid>
 					<Grid item md={8} p={4}>
 						<>
@@ -165,13 +155,7 @@ export default function ExampleComponent() {
 							<Divider sx={{ my: 3 }} />
 							{safeAuthSignInResponse?.safes?.length ? (
 								safeAuthSignInResponse?.safes?.map((safe, index) => (
-									<Box sx={{ my: 3 }} key={index}>
-										<EthHashInfo
-											address={safe}
-											showCopyButton
-											shortAddress={false}
-										/>
-									</Box>
+									<Box sx={{ my: 3 }} key={index}></Box>
 								))
 							) : (
 								<Typography variant="body1" color="secondary" fontWeight={700}>
@@ -183,22 +167,22 @@ export default function ExampleComponent() {
 				</Grid>
 			)}
 		</>
-	);
+	)
 }
 const getPrefix = (chainId: string) => {
 	switch (chainId) {
 		case "0x1":
-			return "eth";
+			return "eth"
 		case "0x5":
-			return "gor";
+			return "gor"
 		case "0x100":
-			return "gno";
+			return "gno"
 		case "0x137":
-			return "matic";
+			return "matic"
 		default:
-			return "eth";
+			return "eth"
 	}
-};
+}
 
 // 	const options: Web3AuthOptions = {
 // 		clientId:
