@@ -1,7 +1,6 @@
 "use client"
 import ExampleComponent from "./ExampleComponent"
-import Stripe from "./onRampKitComponent"
+import StripeComponent from "./StripeComponent"
 
-
-export { ExampleComponent, Stripe }
+export { ExampleComponent, StripeComponent }
 
