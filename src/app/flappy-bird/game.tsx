@@ -74,6 +74,9 @@ const fallOut = () =>
 	birdY + constants.BIRD_HEIGHT >
 	constants.CANVAS_HEIGHT - constants.HEIGHT_GROUND
 
+// check if bird has touched the ceiling
+const outOfCanvas = () => birdY < 0
+
 // stop game
 const reset = () => {
 	hasStarted = false
@@ -178,7 +181,7 @@ export default function Game() {
 			if (context) {
 				setInterval(() => {
 					// dying
-					if (touchedPipe() || fallOut()) {
+					if (touchedPipe() || fallOut() || outOfCanvas()) {
 						if (score > bestScore) {
 							bestScore = score
 							localStorage.setItem("bestScore", score.toString())
