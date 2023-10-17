@@ -12,8 +12,11 @@ import { OpenloginAdapter } from "@web3auth/openlogin-adapter"
 import { Web3AuthOptions } from "@web3auth/modal"
 
 import AppBar from "./AppBar"
+import { ethers } from "ethers"
 
 import { Web3AuthModalPack, Web3AuthEventListener } from "@safe-global/auth-kit"
+import Safe, { EthersAdapter, SafeFactory, SafeAccountConfig } from '@safe-global/protocol-kit'
+import SafeApiKit from '@safe-global/api-kit'
 
 import type { AuthKitSignInData } from "@safe-global/auth-kit/dist/src/types"
 import { EthHashInfo } from "@safe-global/safe-react-components"
@@ -107,8 +110,32 @@ export default function ExampleComponent() {
 			;(async () => {
 				await login()
 			})()
+		// const txServiceUrl = "https://safe-transaction-goerli.safe.global"
+		// const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
+		// const signer = provider.getSigner()
+		// const ethAdapter = new EthersAdapter({
+		// 	ethers,
+		// 	signerOrProvider: signer || provider
+		//   })
+		// const safeService = new SafeApiKit({ txServiceUrl, ethAdapter })
+		// //const safeFactory = await SafeFactory.create({ ethAdapter: ethAdapter })
+		// console.log("info",safeService.getSafeCreationInfo)
+
 		}
 	}, [web3AuthModalPack])
+	// useEffect(() => {
+	// 	if (web3AuthModalPack && web3AuthModalPack.getProvider()) {
+	// 		;(async () => {
+	// 			await login()
+	// 		})();
+	// 	async function getSafeInfo() {
+	// 		const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
+	// 		const signer = provider.getSigner()
+	// 		const safeService = new SafeApiKit({ txServiceUrl: "https://safe-transaction-goerli.safe.global", ethAdapter: new EthersAdapter({ ethers, signerOrProvider: signer || provider }) })
+	// 		const safeInfo = await safeService.getSafeInfo
+	// 		console.log("safeInfo", safeInfo)
+	// 	}}
+	// }, )
 
 	const login = async () => {
 		if (!web3AuthModalPack) return
@@ -123,6 +150,28 @@ export default function ExampleComponent() {
 		setUserInfo(userInfo || undefined)
 		setProvider(web3AuthModalPack.getProvider() as SafeEventEmitterProvider)
 	}
+	const safe = async () => {
+		if (!web3AuthModalPack) return
+		const txServiceUrl = "https://safe-transaction-goerli.safe.global"
+		const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
+		const signer = provider.getSigner()
+		const ethAdapter = new EthersAdapter({
+			ethers,
+			signerOrProvider: signer || provider
+		})
+		const safeFactory = await SafeFactory.create({ ethAdapter })
+		const owners = [(await signer.getAddress()).toString()]
+		const threshold = 1
+		const safeAccountConfig: SafeAccountConfig = {
+			owners,
+			threshold
+		}
+		const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig })
+		console.log("safeSdk", safeSdk)
+		const newSafeAddress = await safeSdk.getAddress()
+		console.log("newSafeAddress", newSafeAddress)
+	}
+	//safe()
 	const logout = async () => {
 		if (!web3AuthModalPack) return
 
