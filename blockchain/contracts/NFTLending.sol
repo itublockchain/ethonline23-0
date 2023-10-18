@@ -24,6 +24,12 @@ contract NFTLending is AutomationCompatibleInterface {
         isBorrowable[_tokenId] = !isBorrowable[_tokenId];
     }
 
+    // TODO: NFT should be send to this contract.
+    // contract should GET Request to the API via chainlink api functions.
+    // API gives person to play rights.
+    // then keeper should call liq function.
+    // liq function should take the games rights via API.
+    // then the renting advert should be reposted.
     function borrowNFT(uint256 _tokenId, uint256 _days) external {
         require(isBorrowable[_tokenId], "This NFT is not borrowable");
         require(lendings[_tokenId][msg.sender] - block.timestamp <= 0, "You have already borrowed this NFT");
