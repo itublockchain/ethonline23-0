@@ -15,7 +15,7 @@ import AppBar from "./AppBar"
 import { ethers } from "ethers"
 
 import { Web3AuthModalPack, Web3AuthEventListener } from "@safe-global/auth-kit"
-import Safe, { EthersAdapter, SafeFactory, SafeAccountConfig } from '@safe-global/protocol-kit'
+import Safe, { EthersAdapter, SafeFactory, SafeAccountConfig, SafeDeploymentConfig, PredictedSafeProps } from '@safe-global/protocol-kit'
 import SafeApiKit from '@safe-global/api-kit'
 
 import type { AuthKitSignInData } from "@safe-global/auth-kit/dist/src/types"
@@ -150,28 +150,43 @@ export default function ExampleComponent() {
 		setUserInfo(userInfo || undefined)
 		setProvider(web3AuthModalPack.getProvider() as SafeEventEmitterProvider)
 	}
+	useEffect(() => {
 	const safe = async () => {
 		if (!web3AuthModalPack) return
-		const txServiceUrl = "https://safe-transaction-goerli.safe.global"
 		const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
+		console.log("provider", provider)
 		const signer = provider.getSigner()
+		console.log("signer", signer)
 		const ethAdapter = new EthersAdapter({
 			ethers,
 			signerOrProvider: signer || provider
 		})
-		const safeFactory = await SafeFactory.create({ ethAdapter })
-		const owners = [(await signer.getAddress()).toString()]
-		const threshold = 1
 		const safeAccountConfig: SafeAccountConfig = {
-			owners,
-			threshold
+			owners: [(await signer.getAddress()).toString()],
+			threshold: 1
 		}
-		const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig })
-		console.log("safeSdk", safeSdk)
-		const newSafeAddress = await safeSdk.getAddress()
-		console.log("newSafeAddress", newSafeAddress)
-	}
-	//safe()
+		const SafeDeploymentConfig: SafeDeploymentConfig = {
+			saltNonce: '0',
+		}
+		const predictedSafe: PredictedSafeProps = {
+			safeAccountConfig: safeAccountConfig,
+			safeDeploymentConfig: SafeDeploymentConfig,
+
+		}
+		const safeSdk: Safe = await Safe.create({ ethAdapter, predictedSafe })
+		const safeAddress = await safeSdk.getAddress()
+		const safeFactory = await SafeFactory.create({ ethAdapter })
+		console.log("safeAddress", safeAddress)
+		const nonce = await safeSdk.getNonce()
+		if (nonce == 0) {
+			console.log("nonce", nonce)
+			const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig, options: { gasLimit: 3000000 } })
+			const newSafeAddress = await safeSdk.getAddress()
+			console.log("newSafeAddress", newSafeAddress)
+		}
+	} 
+	safe()
+	}, [provider])
 	const logout = async () => {
 		if (!web3AuthModalPack) return
 
