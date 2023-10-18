@@ -6,12 +6,15 @@ import "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol";
 
 contract NFTLending is AutomationCompatibleInterface {
     
+    uint256 public immutable interval;
     address public contractAddress;
     IERC721 public nftContract;
+    uint256[] public tokenIds;
     mapping (uint256 _tokenId => mapping (address _borrower => uint256 endTime)) lendings;
     mapping (uint256 _tokenId => bool _borrowable) isBorrowable;
 
-    constructor(address _contractAddress) {
+    constructor(address _contractAddress, uint256 _interval) {
+        interval = _interval;
         contractAddress = _contractAddress;
         nftContract = IERC721(_contractAddress);
     }
@@ -25,6 +28,7 @@ contract NFTLending is AutomationCompatibleInterface {
         require(isBorrowable[_tokenId], "This NFT is not borrowable");
         require(lendings[_tokenId][msg.sender] - block.timestamp <= 0, "You have already borrowed this NFT");
         require(_days * 86400 > 1 days, "You must borrow for at least 1 days");
+        tokenIds.push(_tokenId);
         lendings[_tokenId][msg.sender] = block.timestamp + _days * 86400;
         nftContract.transferFrom(nftContract.ownerOf(_tokenId), msg.sender, _tokenId);
     }
@@ -38,10 +42,25 @@ contract NFTLending is AutomationCompatibleInterface {
     }
 
     function performUpkeep(bytes calldata /* performData */) external override {
-
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            uint256 tokenId = tokenIds[i];
+            if (lendings[tokenId][msg.sender] - block.timestamp <= 0) {
+                delete tokenIds[i];
+            }
+        }
     }
 
-    function checkUpkeep(bytes calldata checkData) external returns (bool upkeepNeeded, bytes memory performData) {
+    function checkUpkeep(bytes calldata checkData) external view returns (bool upkeepNeeded, bytes memory performData) {
+        upkeepNeeded = false;
 
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            uint256 tokenId = tokenIds[i];
+            if (lendings[tokenId][msg.sender] - block.timestamp <= 0) {
+                upkeepNeeded = true;
+                break;
+            }
+        }
+        performData = checkData;
+        return (upkeepNeeded, performData);
     }
 }
