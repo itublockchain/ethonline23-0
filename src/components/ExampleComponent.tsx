@@ -16,10 +16,8 @@ import { ethers } from "ethers"
 
 import { Web3AuthModalPack, Web3AuthEventListener } from "@safe-global/auth-kit"
 import Safe, { EthersAdapter, SafeFactory, SafeAccountConfig, SafeDeploymentConfig, PredictedSafeProps } from '@safe-global/protocol-kit'
-import SafeApiKit from '@safe-global/api-kit'
 
 import type { AuthKitSignInData } from "@safe-global/auth-kit/dist/src/types"
-import { EthHashInfo } from "@safe-global/safe-react-components"
 
 // https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments
 
@@ -29,6 +27,7 @@ const disconnectedHandler: Web3AuthEventListener = (data) =>
 	console.log("DISCONNECTED", data)
 
 export default function ExampleComponent() {
+	const [signerAddress, setSignerAddress] = useState<string>("")
 	const [web3AuthModalPack, setWeb3AuthModalPack] =
 		useState<Web3AuthModalPack>()
 	const [safeAuthSignInResponse, setSafeAuthSignInResponse] =
@@ -151,6 +150,12 @@ export default function ExampleComponent() {
 		setProvider(web3AuthModalPack.getProvider() as SafeEventEmitterProvider)
 	}
 	useEffect(() => {
+		if (!web3AuthModalPack) return
+		const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
+		const signer = provider.getSigner()
+		setSignerAddress(signer.getAddress().toString())
+	}, [provider, web3AuthModalPack])
+	useEffect(() => {
 	const safe = async () => {
 		if (!web3AuthModalPack) return
 		const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
@@ -165,30 +170,37 @@ export default function ExampleComponent() {
 			owners: [(await signer.getAddress()).toString()],
 			threshold: 1
 		}
+		let saltNonce = window.localStorage.getItem("saltNonce")
+		if (!saltNonce){
+		saltNonce = crypto.getRandomValues(new Uint8Array(8)).join("")
+		window.localStorage.setItem(
+			"saltNonce",
+			saltNonce
+			)
+		}
 		const SafeDeploymentConfig: SafeDeploymentConfig = {
-			saltNonce: '3',
-		}
+				saltNonce: saltNonce,	
+			}
 		const predictedSafe: PredictedSafeProps = {
-			safeAccountConfig: safeAccountConfig,
-			safeDeploymentConfig: SafeDeploymentConfig,
-
-		}
+				safeAccountConfig: safeAccountConfig,
+				safeDeploymentConfig: SafeDeploymentConfig,
+				
+			}
 		const safeSdk: Safe = await Safe.create({ ethAdapter, predictedSafe })
 		const safeAddress = await safeSdk.getAddress()
-		const safeFactory = await SafeFactory.create({ ethAdapter })
+		const testing = await provider.getCode(safeAddress)
+		console.log("testing", testing)
 		console.log("safeAddress", safeAddress)
-		const nonce = await safeSdk.getNonce()
-		// the saltNonce need to be random number and stored in the localStorage
-		const saltNonce = '3'
-		if (nonce == 0) {
-			console.log("nonce", nonce)
-			const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig, saltNonce })
+		if (testing == "0x") {
+			const safeFactory = await SafeFactory.create({ ethAdapter })
+			console.log("saltNonce", saltNonce)
+			const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig, saltNonce: saltNonce })
 			const newSafeAddress = await safeSdk.getAddress()
 			console.log("newSafeAddress", newSafeAddress)
-		}
+			}
 	} 
 	safe()
-	}, [provider, web3AuthModalPack])
+	}, [signerAddress ,web3AuthModalPack])
 	const logout = async () => {
 		if (!web3AuthModalPack) return
 
