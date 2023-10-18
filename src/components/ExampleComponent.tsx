@@ -166,7 +166,7 @@ export default function ExampleComponent() {
 			threshold: 1
 		}
 		const SafeDeploymentConfig: SafeDeploymentConfig = {
-			saltNonce: '0',
+			saltNonce: '3',
 		}
 		const predictedSafe: PredictedSafeProps = {
 			safeAccountConfig: safeAccountConfig,
@@ -178,15 +178,17 @@ export default function ExampleComponent() {
 		const safeFactory = await SafeFactory.create({ ethAdapter })
 		console.log("safeAddress", safeAddress)
 		const nonce = await safeSdk.getNonce()
+		// the saltNonce need to be random number and stored in the localStorage
+		const saltNonce = '3'
 		if (nonce == 0) {
 			console.log("nonce", nonce)
-			const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig, options: { gasLimit: 3000000 } })
+			const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig, saltNonce })
 			const newSafeAddress = await safeSdk.getAddress()
 			console.log("newSafeAddress", newSafeAddress)
 		}
 	} 
 	safe()
-	}, [provider])
+	}, [provider, web3AuthModalPack])
 	const logout = async () => {
 		if (!web3AuthModalPack) return
 
