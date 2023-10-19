@@ -1,4 +1,7 @@
 // https://github.com/safe-global/safe-core-sdk/blob/main/packages/auth-kit/example/src/App.tsx
+import * as dotenv from "dotenv";
+dotenv.config();
+const RELAY_API = process.env.RELAY_API;
 import { useCallback, useEffect, useState } from "react";
 import {
 	ADAPTER_EVENTS,
@@ -43,6 +46,8 @@ const disconnectedHandler: Web3AuthEventListener = (data) =>
 
 export default function ExampleComponent() {
 	const [signerAddress, setSignerAddress] = useState<string>("");
+	const [isSafeDeployed, setIsSafeDeployed] = useState<boolean>(false);
+	const [stateSafeAddress, setStateSafeAddress] = useState<string>("");
 	const [web3AuthModalPack, setWeb3AuthModalPack] =
 		useState<Web3AuthModalPack>();
 	const [safeAuthSignInResponse, setSafeAuthSignInResponse] =
@@ -197,17 +202,67 @@ export default function ExampleComponent() {
 				});
 				const newSafeAddress = await safeSdk.getAddress();
 				console.log("newSafeAddress", newSafeAddress);
+				const safeApiKit = new SafeApiKit({
+					txServiceUrl: "https://safe-transaction-goerli.safe.global",
+					ethAdapter,
+				});
+				safeApiKit.getSafeCreationInfo(safeAddress).then((res) => {
+					console.log("res", res);
+				});
+				setIsSafeDeployed(true);
 			}
-			const safeApiKit = new SafeApiKit({
-				txServiceUrl: "https://safe-transaction-goerli.safe.global",
-				ethAdapter,
-			});
-			safeApiKit.getSafeCreationInfo(safeAddress).then((res) => {
-				console.log("res", res);
-			});
 		};
 		safe();
 	}, [signerAddress, web3AuthModalPack]);
+	const tx = async () => {
+		if (!web3AuthModalPack) return
+		const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
+		const signer = provider.getSigner()
+		const relayKit = new GelatoRelayPack(RELAY_API)
+		const ethAdapter = new EthersAdapter({
+			ethers,
+			signerOrProvider: signer || provider
+		})
+		const safeAccountConfig: SafeAccountConfig = {
+			owners: [(await signer.getAddress()).toString()],
+			threshold: 1
+		}
+		let saltNonce = window.localStorage.getItem("saltNonce")
+		if (!saltNonce) {
+			saltNonce = crypto.getRandomValues(new Uint8Array(8)).join("")
+			window.localStorage.setItem(
+				"saltNonce",
+				saltNonce
+				)
+			}
+			const SafeDeploymentConfig: SafeDeploymentConfig = {
+				saltNonce: saltNonce,
+			}
+			const predictedSafe: PredictedSafeProps = {
+				safeAccountConfig: safeAccountConfig,
+				safeDeploymentConfig: SafeDeploymentConfig,
+				
+			}
+		const safeSdk: Safe = await Safe.create({ ethAdapter, predictedSafe })
+		const txSafeAddress = await safeSdk.getAddress()
+		const transactions: MetaTransactionData[] = [{
+			to: txSafeAddress,
+			data: '0x',
+			value: '0'
+		}]
+		const options: MetaTransactionOptions = {
+			isSponsored: true,
+			gasLimit: '3000000',
+		}
+		const safeTransaction = await relayKit.createRelayedTransaction({
+			safe: safeSdk,
+			transactions,
+			options
+		})
+		const signedSafeTransaction = await safeSdk.signTransaction(safeTransaction)
+		const response = await relayKit.executeRelayTransaction(signedSafeTransaction, safeSdk, options)
+		console.log(`Relay Transaction Task ID: https://relay.gelato.digital/tasks/status/${response.taskId}`)
+	}
 	return (
 		<>
 			<AppBar
@@ -218,6 +273,7 @@ export default function ExampleComponent() {
 			/>
 			{safeAuthSignInResponse?.eoa && (
 				<Grid container>
+					<button onClick={tx}>tx</button>
 					<Grid item md={4} p={4}>
 						<Typography variant="h3" color="secondary" fontWeight={700}>
 							Owner account
