@@ -12,15 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.update = exports.query = exports.insert = exports.setUpDB = void 0;
 const sdk_1 = require("@tableland/sdk");
 const ethers_1 = require("ethers");
-const experimental_1 = require("@ethersproject/experimental");
 require("dotenv").config();
-const privateKey = process.env.TABLELAND_PRIVATE_KEY;
+const privateKey = process.env.NEXT_PUBLIC_TABLELAND_PRIVATE_KEY;
+console.log("db private key: ", privateKey);
 const setUpDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const wallet = new ethers_1.Wallet(privateKey);
-    const provider = new ethers_1.providers.JsonRpcProvider(process.env.MUMBAI_RPC); // Local tableland or polygonMumbai
-    const baseSigner = wallet.connect(provider);
-    const signer = new experimental_1.NonceManager(baseSigner); // Using nonceManager to handle local tableland node
-    // Default to grabbing a wallet connection in a browser
+    const provider = new ethers_1.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_MUMBAI_RPC); // Local tableland or polygonMumbai
+    const signer = wallet.connect(provider);
     const db = new sdk_1.Database({ signer });
     return db;
 });

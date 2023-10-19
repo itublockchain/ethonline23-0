@@ -166,12 +166,13 @@ export default function ExampleComponent() {
 				ethers,
 				signerOrProvider: signer || provider,
 			})
-			const eoaAddress = await signer.getAddress()
+			const eoaAddress = (await signer.getAddress()).toString()
 			const safeAccountConfig: SafeAccountConfig = {
-				owners: [eoaAddress],
+				owners: [(await signer.getAddress()).toString()],
 				threshold: 1,
 			}
 			let saltNonce = window.localStorage.getItem("saltNonce")
+			console.log("saltNonce1", saltNonce)
 			if (!saltNonce) {
 				saltNonce = crypto.getRandomValues(new Uint8Array(8)).join("")
 				window.localStorage.setItem("saltNonce", saltNonce)
@@ -227,6 +228,7 @@ export default function ExampleComponent() {
 			threshold: 1,
 		}
 		let saltNonce = window.localStorage.getItem("saltNonce")
+		console.log("saltNonce2", saltNonce)
 		if (!saltNonce) {
 			saltNonce = crypto.getRandomValues(new Uint8Array(8)).join("")
 			window.localStorage.setItem("saltNonce", saltNonce)

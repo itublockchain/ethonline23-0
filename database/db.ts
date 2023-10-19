@@ -1,17 +1,14 @@
 import { Database, Statement } from "@tableland/sdk";
 import { Wallet, providers } from "ethers";
-import { NonceManager } from "@ethersproject/experimental";
-require("dotenv").config()
+require("dotenv").config();
 
-const privateKey = process.env.TABLELAND_PRIVATE_KEY;
+const privateKey = process.env.NEXT_PUBLIC_TABLELAND_PRIVATE_KEY;
+console.log("db private key: ", privateKey);
 
 export const setUpDB = async () => {
     const wallet = new Wallet(privateKey!);
-    const provider = new providers.JsonRpcProvider(process.env.MUMBAI_RPC); // Local tableland or polygonMumbai
-    const baseSigner = wallet.connect(provider);
-    const signer = new NonceManager(baseSigner); // Using nonceManager to handle local tableland node
-  
-    // Default to grabbing a wallet connection in a browser
+    const provider = new providers.JsonRpcProvider(process.env.NEXT_PUBLIC_MUMBAI_RPC); // Local tableland or polygonMumbai
+    const signer = wallet.connect(provider);  
     const db = new Database({signer});
 
     return db
