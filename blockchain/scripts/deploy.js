@@ -1,53 +1,38 @@
-import { AddressZero } from "@biconomy/common";
 import { ethers } from "hardhat";
 
-async function deployContracts() {
+async function main() {
+    const [deployer] = await ethers.getSigners();
 
-	/*
-		************************
-		* deploy MockERC20.sol *
-		************************
-	*/
-	const mockERC20 = await ethers.deployContract("MockERC20");
-	await mockERC20.waitForDeployment();
+    console.log("Deploying contracts with the account:", deployer.address);
 
-	console.log(`MockERC20 contract deployed to ${mockERC20.target}`);
+    // Deploy MockBAYC
+    const MockBAYC = await ethers.getContractFactory("MockBAYC");
+    const mockBAYC = await MockBAYC.deploy();
+    await mockBAYC.deployed();
+    console.log("MockBAYC deployed to:", mockBAYC.address);
 
-	/*
-		*************************
-		* deploy MockOracle.sol *
-		*************************
-	*/
+    // Deploy ApeERC20
+    const ApeERC20 = await ethers.getContractFactory("ApeERC20");
+    const apeERC20 = await ApeERC20.deploy();
+    await apeERC20.deployed();
+    console.log("ApeERC20 deployed to:", apeERC20.address);
 
-	const mockOracle = await ethers.deployContract("MockOracle");
-	await mockOracle.waitForDeployment();
+    // Deploy MainVault
+    const MainVault = await ethers.getContractFactory("MainVault");
+    const mainVault = await MainVault.deploy(apeERC20.address, deployer.address); // Assuming deployer address is the donation address
+    await mainVault.deployed();
+    console.log("MainVault deployed to:", mainVault.address);
 
-	console.log(`MockOracle contract deployed to ${mockOracle.target}`);
-
-	return { mockERC20, mockOracle };
+    // Deploy RentalContract
+    const RentalContract = await ethers.getContractFactory("RentalContract");
+    const rentalContract = await RentalContract.deploy(mockBAYC.address, apeERC20.address, mainVault.address);
+    await rentalContract.deployed();
+    console.log("RentalContract deployed to:", rentalContract.address);
 }
 
-async function deployVaultWithDependencies() {
-
-	/*
-		********************
-		* deploy Vault.sol *
-		********************
-	*/
-	const { mockERC20, mockOracle } = await deployContracts();
-
-	const apeCoinAddress = mockERC20.target;
-    // TODO: fix donation address
-	const donationAddress = AddressZero;
-	const args = [apeCoinAddress, donationAddress];
-
-	const vault = await ethers.deployContract("Vault", args);
-	await vault.waitForDeployment();
-
-	console.log(`Vault contract deployed to ${vault.target}`);
-}
-
-deployVaultWithDependencies().catch((error) => {
-	console.error(error);
-	process.exitCode = 1;
-});
+main()
+    .then(() => process.exit(0))
+    .catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
