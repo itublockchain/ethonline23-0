@@ -1,13 +1,16 @@
 import { ethers } from "ethers"
-import { serverConfig } from "@/config"
+import { clientConfig } from "@/config"
+require("dotenv").config()
 
-console.log(serverConfig)
+const privateKey = process.env.NEXT_PUBLIC_ERC20_SENDER_PRIVATE_KEY;
+
+
 
 const provider = new ethers.providers.JsonRpcProvider(
 	"https://ethereum-goerli.publicnode.com"
 )
 const mainAccount = new ethers.Wallet(
-	"82e7939157b2d1640f0ab6ae871b1b73152069f35837b000c3c47c54574d610f",
+	clientConfig.ERC20_SENDER_PRIVATE_KEY,
 	provider
 )
 

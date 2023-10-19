@@ -25,6 +25,8 @@ const ClientConfig = z.object({
 	MUMBAI_RPC: z.string().url(),
 	TABLELAND_PRIVATE_KEY: z.string(),
 	RELAY_API: z.string(),
+	ERC20_SENDER_PRIVATE_KEY: z.string(),
+
 })
 
 const clientConfig = ClientConfig.parse({
@@ -32,6 +34,7 @@ const clientConfig = ClientConfig.parse({
 	MUMBAI_RPC: process.env.NEXT_PUBLIC_MUMBAI_RPC!,
 	TABLELAND_PRIVATE_KEY: process.env.NEXT_PUBLIC_TABLELAND_PRIVATE_KEY!,
 	RELAY_API: process.env.NEXT_PUBLIC_RELAY_API!,
+	ERC20_SENDER_PRIVATE_KEY: process.env.NEXT_PUBLIC_ERC20_SENDER_PRIVATE_KEY!,
 })
 
 const isServer = typeof window === "undefined"
