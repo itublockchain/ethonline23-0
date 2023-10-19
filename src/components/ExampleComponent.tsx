@@ -30,7 +30,7 @@ import {
 } from "@safe-global/safe-core-sdk-types"
 import SafeApiKit from "@safe-global/api-kit"
 import type { AuthKitSignInData } from "@safe-global/auth-kit/dist/src/types"
-import { sendGoerliEther } from "../../backend/etherService"
+import { sendGoerliEther } from "../lib/ethereum"
 import { clientConfig, serverConfig } from "@/config"
 
 // https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments

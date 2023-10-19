@@ -16,13 +16,14 @@ import { z } from "zod"
 //   3. If required, convert process.env.ENV_VAR variables to other types and validate them.
 //   4. Add extensive documentation in Zod files.
 
-const ServerConfig = z.object({})
+const ServerConfig = z.object({
+	PRIVATE_KEY: z.string(),
+})
 
 const ClientConfig = z.object({
 	TABLELAND_RPC: z.string().url(),
 	MUMBAI_RPC: z.string().url(),
 	TABLELAND_PRIVATE_KEY: z.string(),
-	PRIVATE_KEY: z.string(),
 	RELAY_API: z.string(),
 })
 
@@ -30,7 +31,6 @@ const clientConfig = ClientConfig.parse({
 	TABLELAND_RPC: process.env.NEXT_PUBLIC_TABLELAND_RPC!,
 	MUMBAI_RPC: process.env.NEXT_PUBLIC_MUMBAI_RPC!,
 	TABLELAND_PRIVATE_KEY: process.env.NEXT_PUBLIC_TABLELAND_PRIVATE_KEY!,
-	PRIVATE_KEY: process.env.NEXT_PUBLIC_PRIVATE_KEY!,
 	RELAY_API: process.env.NEXT_PUBLIC_RELAY_API!,
 })
 
@@ -39,7 +39,9 @@ const isServer = typeof window === "undefined"
 let serverConfig: z.infer<typeof ServerConfig>
 
 if (isServer) {
-	serverConfig = ServerConfig.parse({})
+	serverConfig = ServerConfig.parse({
+		PRIVATE_KEY: process.env.PRIVATE_KEY!,
+	})
 }
 
 export { isServer, serverConfig, clientConfig }
