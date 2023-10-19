@@ -19,7 +19,7 @@ async function main() {
 
     // Deploy MainVault
     const MainVault = await ethers.getContractFactory("MainVault");
-    const mainVault = await MainVault.deploy(apeERC20.address, deployer.address); // Assuming deployer address is the donation address
+    const mainVault = await MainVault.deploy(apeERC20.address);
     await mainVault.deployed();
     console.log("MainVault deployed to:", mainVault.address);
 
