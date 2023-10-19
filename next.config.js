@@ -1,4 +1,11 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+let nextConfig = {}
+
+nextConfig = {
+	...nextConfig,
+	webpack: (config) => {
+		return config
+	},
+}
 
 module.exports = nextConfig
