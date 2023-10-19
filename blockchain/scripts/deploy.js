@@ -24,7 +24,7 @@ async function main() {
     console.log("MainVault deployed to:", mainVault.address);
 
     // Deploy RentalContract
-    const RentalContract = await ethers.getContractFactory("RentalContract");
+    const RentalContract = await ethers.getContractFactory("Rental");
     const rentalContract = await RentalContract.deploy(mockBAYC.address, apeERC20.address, mainVault.address);
     await rentalContract.deployed();
     console.log("RentalContract deployed to:", rentalContract.address);
