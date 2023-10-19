@@ -1,5 +1,5 @@
 // https://github.com/safe-global/safe-core-sdk/blob/main/packages/auth-kit/example/src/App.tsx
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
 	ADAPTER_EVENTS,
 	CHAIN_NAMESPACES,
@@ -7,16 +7,18 @@ import {
 	UserInfo,
 	WALLET_ADAPTERS,
 } from "@web3auth/base"
-import { Box, Divider, Grid, Typography } from "@mui/material"
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter"
 import { Web3AuthOptions } from "@web3auth/modal"
+import { Box, Divider, Grid, Typography } from "@mui/material"
 
 import AppBar from "./AppBar"
 import { ethers } from "ethers"
 
+import { GelatoRelayPack } from '@safe-global/relay-kit'
 import { Web3AuthModalPack, Web3AuthEventListener } from "@safe-global/auth-kit"
 import Safe, { EthersAdapter, SafeFactory, SafeAccountConfig, SafeDeploymentConfig, PredictedSafeProps } from '@safe-global/protocol-kit'
-
+import { MetaTransactionData, MetaTransactionOptions } from '@safe-global/safe-core-sdk-types'
+import SafeApiKit from '@safe-global/api-kit'
 import type { AuthKitSignInData } from "@safe-global/auth-kit/dist/src/types"
 
 // https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments
@@ -52,7 +54,6 @@ export default function ExampleComponent() {
 					loginMethodsOrder: ["google", "facebook"],
 				},
 			}
-
 			const modalConfig = {
 				[WALLET_ADAPTERS.METAMASK]: {
 					label: "metamask",
@@ -60,7 +61,6 @@ export default function ExampleComponent() {
 					showOnMobile: false,
 				},
 			}
-
 			const openloginAdapter = new OpenloginAdapter({
 				loginSettings: {
 					mfaLevel: "mandatory",
@@ -72,26 +72,20 @@ export default function ExampleComponent() {
 					},
 				},
 			})
-
 			const web3AuthModalPack = new Web3AuthModalPack({
 				txServiceUrl: "https://safe-transaction-goerli.safe.global",
 			})
-
 			await web3AuthModalPack.init({
 				options,
 				adapters: [openloginAdapter],
 				modalConfig,
 			})
-
 			web3AuthModalPack.subscribe(ADAPTER_EVENTS.CONNECTED, connectedHandler)
-
 			web3AuthModalPack.subscribe(
 				ADAPTER_EVENTS.DISCONNECTED,
 				disconnectedHandler
 			)
-
 			setWeb3AuthModalPack(web3AuthModalPack)
-
 			return () => {
 				web3AuthModalPack.unsubscribe(
 					ADAPTER_EVENTS.CONNECTED,
@@ -104,37 +98,23 @@ export default function ExampleComponent() {
 			}
 		})()
 	}, [])
+
 	useEffect(() => {
 		if (web3AuthModalPack && web3AuthModalPack.getProvider()) {
 			;(async () => {
 				await login()
 			})()
-		// const txServiceUrl = "https://safe-transaction-goerli.safe.global"
-		// const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
-		// const signer = provider.getSigner()
-		// const ethAdapter = new EthersAdapter({
-		// 	ethers,
-		// 	signerOrProvider: signer || provider
-		//   })
-		// const safeService = new SafeApiKit({ txServiceUrl, ethAdapter })
-		// //const safeFactory = await SafeFactory.create({ ethAdapter: ethAdapter })
-		// console.log("info",safeService.getSafeCreationInfo)
 
 		}
 	}, [web3AuthModalPack])
-	// useEffect(() => {
-	// 	if (web3AuthModalPack && web3AuthModalPack.getProvider()) {
-	// 		;(async () => {
-	// 			await login()
-	// 		})();
-	// 	async function getSafeInfo() {
-	// 		const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
-	// 		const signer = provider.getSigner()
-	// 		const safeService = new SafeApiKit({ txServiceUrl: "https://safe-transaction-goerli.safe.global", ethAdapter: new EthersAdapter({ ethers, signerOrProvider: signer || provider }) })
-	// 		const safeInfo = await safeService.getSafeInfo
-	// 		console.log("safeInfo", safeInfo)
-	// 	}}
-	// }, )
+
+	useEffect(() => {
+		if (!web3AuthModalPack) return
+		if(!web3AuthModalPack.getProvider()) return
+		const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
+		const signer = provider.getSigner()
+		setSignerAddress(signer.getAddress().toString())
+	}, [provider, web3AuthModalPack])
 
 	const login = async () => {
 		if (!web3AuthModalPack) return
@@ -149,12 +129,14 @@ export default function ExampleComponent() {
 		setUserInfo(userInfo || undefined)
 		setProvider(web3AuthModalPack.getProvider() as SafeEventEmitterProvider)
 	}
-	useEffect(() => {
+	const logout = async () => {
 		if (!web3AuthModalPack) return
-		const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
-		const signer = provider.getSigner()
-		setSignerAddress(signer.getAddress().toString())
-	}, [provider, web3AuthModalPack])
+
+		await web3AuthModalPack.signOut()
+
+		setProvider(null)
+		setSafeAuthSignInResponse(null)
+	}
 	useEffect(() => {
 	const safe = async () => {
 		if (!web3AuthModalPack) return
@@ -191,24 +173,24 @@ export default function ExampleComponent() {
 		const testing = await provider.getCode(safeAddress)
 		console.log("testing", testing)
 		console.log("safeAddress", safeAddress)
+		const relayKit = new GelatoRelayPack(process.env.RELAY_API!)
 		if (testing == "0x") {
 			const safeFactory = await SafeFactory.create({ ethAdapter })
-			console.log("saltNonce", saltNonce)
 			const safeSdk: Safe = await safeFactory.deploySafe({ safeAccountConfig, saltNonce: saltNonce })
 			const newSafeAddress = await safeSdk.getAddress()
 			console.log("newSafeAddress", newSafeAddress)
 			}
+			const safeApiKit = new SafeApiKit({
+				txServiceUrl: 'https://safe-transaction-goerli.safe.global',
+				ethAdapter
+			  })
+		safeApiKit.getSafeCreationInfo(safeAddress).then((res) => {
+			console.log("res", res)
+		}
+		)
 	} 
 	safe()
-	}, [signerAddress ,web3AuthModalPack])
-	const logout = async () => {
-		if (!web3AuthModalPack) return
-
-		await web3AuthModalPack.signOut()
-
-		setProvider(null)
-		setSafeAuthSignInResponse(null)
-	}
+	}, [ signerAddress ,web3AuthModalPack])
 	return (
 		<>
 			<AppBar
