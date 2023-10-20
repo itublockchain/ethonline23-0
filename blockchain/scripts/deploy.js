@@ -1,3 +1,4 @@
+const { verify } = require("../utils/verify");
 const hre = require("hardhat");
 
 async function main() {
@@ -15,7 +16,7 @@ async function main() {
 	// Deploy MainVault
 	console.log("Deploying MainVault...");
 	const mainVault = await hre.ethers.deployContract("MainVault", [
-		apeERC20.target
+		apeERC20.target,
 	]);
 	console.log("MainVault deployed to:", mainVault.target);
 
@@ -27,8 +28,20 @@ async function main() {
 		mainVault.target,
 	]);
 	console.log("RentalContract deployed to:", rentalContract.target);
+
+	if (process.env.ETHERSCAN_API_KEY) {
+		console.log("Verifying contracts");
+		await verify(mockBAYC.target);
+		await verify(apeERC20.target);
+		await verify(mainVault.target, [apeERC20.target]);
+		await verify(rentalContract.target, [
+			mockBAYC.target,
+			apeERC20.target,
+			mainVault.target,
+		]);
+		console.log("All contracts verified");
+	}
 }
-module.exports.default = main();
 
 main().catch((error) => {
 	console.error(error);
