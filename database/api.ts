@@ -11,7 +11,7 @@ const port = 3002
 app.use(express.static("public"));
 app.use(express.json());
 
-let personalInfos: string = "personalinfos_80001_7714";
+let personalInfos: string = "personalinfos3_80001_7931";
 let scoreboard: string = "game1_80001_7723";
 
 const setup = async () => {
