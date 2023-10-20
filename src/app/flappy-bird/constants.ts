@@ -1,6 +1,6 @@
 export const INTERVAL = 20
-export const CANVAS_WIDTH = 300
-export const CANVAS_HEIGHT = 450
+export const CANVAS_WIDTH = 400
+export const CANVAS_HEIGHT = 600
 
 // clouds
 export const CLOUDS = new Image()

@@ -1,7 +1,7 @@
 import { GamesSlider } from "@/components";
-import { VT323 } from "next/font/google";
 import logo from "../../../public/logo.png";
 import Image from "next/image";
+import { VT323 } from "next/font/google";
 
 const VT323Font = VT323({
   weight: "400",
