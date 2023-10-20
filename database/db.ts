@@ -3,7 +3,7 @@ import { Wallet, providers } from "ethers";
 import { NonceManager } from "@ethersproject/experimental";
 require("dotenv").config()
 
-const privateKey = process.env.TABLELAND_PRIVATE_KEY;
+const privateKey = process.env.NEXT_PUBLIC_TABLELAND_PRIVATE_KEY;
 
 export const setUpDB = async () => {
     const wallet = new Wallet(privateKey!);

@@ -3,8 +3,6 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol";
 
 contract RentalContract {
     IERC721 public bayc;
@@ -56,47 +54,9 @@ contract RentalContract {
         rental.renter = msg.sender;
     }
 
-    // Chainlink Keepers
-    function checkUpkeep(
-        bytes calldata checkData
-    )
-        external
-        view
-        override
-        returns (bool upkeepNeeded, bytes memory performData)
-    {
-        if (nextCheckTokenId == 0) return (false, bytes(""));
-        if (
-            rentals[nextCheckTokenId].endTime < block.timestamp &&
-            rentals[nextCheckTokenId].renter != address(0)
-        ) {
-            return (true, abi.encode(nextCheckTokenId));
-        }
-        return (false, bytes(""));
-    }
-
-    function performUpkeep(bytes calldata performData) external override {
-        uint256 tokenId = abi.decode(performData, (uint256));
+    function endRental(uint256 tokenId) external {
         Rental storage rental = rentals[tokenId];
-        require(
-            rental.endTime < block.timestamp,
-            "Rental period not ended yet"
-        );
+        require(block.timestamp >= rental.endTime, "Rental period not ended yet");
         rental.renter = address(0);
-        updateNextCheckTokenId();
-    }
-
-    function updateNextCheckTokenId() internal {
-        nextCheckTokenId = 0;
-        uint256 earliestEndTime = type(uint256).max;
-        for (uint256 i = 1; i <= bayc.totalSupply(); i++) {
-            if (
-                rentals[i].renter != address(0) &&
-                rentals[i].endTime < earliestEndTime
-            ) {
-                earliestEndTime = rentals[i].endTime;
-                nextCheckTokenId = i;
-            }
-        }
     }
 }
