@@ -52,6 +52,7 @@ export const insert = async (
     values: any[]
 ) => {
     try {
+    console.log("statement", statement)
     // Insert row into a table
     const { meta: insert } = await db.prepare(statement).bind(values).run(); 
     // wait for tx finality
@@ -79,6 +80,7 @@ export const update = async (
     values: any[]
 ) => {
     try {
+        console.log("statement", statement)
     // Update a row into the table
     const { meta: update } = await db
         .prepare(statement)

@@ -12,7 +12,7 @@ app.use(express.static("public"));
 app.use(express.json());
 
 let personalInfos: string = "personalinfos3_80001_7931";
-let scoreboard: string = "game1_80001_7723";
+let scoreboard: string = "game2_80001_7933";
 
 const setup = async () => {
     console.log("setting up db");
@@ -33,9 +33,9 @@ app.get('/api/getPersonalInfos', async (req: Request, res: Response) => {
     }
 });
 app.get('/api/getPersonalInfo', async (req: Request, res: Response) => {
-    const address = req.query.address;
+    const id = req.query.id;
     try {
-        let statement =  `SELECT * FROM ${personalInfos} WHERE id = "${address}"`;
+        let statement =  `SELECT * FROM ${personalInfos} WHERE id = ${id}`;
         console.log('Before query:', db); // Log the value of db before the query
         const results = await query(db, statement);
         res.json(results);
@@ -56,9 +56,9 @@ app.get('/api/getScores', async (req: Request, res: Response) => {
     }
 });
 app.get('/api/getScore', async (req: Request, res: Response) => {
-    const address = req.query.address;
+    const id = req.query.id;
     try {
-        let statement =  `SELECT * FROM ${scoreboard} WHERE id = "${address}"`;
+        let statement =  `SELECT * FROM ${scoreboard} WHERE id = ${id}`;
         console.log('Before query:', db); // Log the value of db before the query
         const results = await query(db, statement);
         res.json(results);
@@ -71,9 +71,9 @@ app.get('/api/getScore', async (req: Request, res: Response) => {
 app.get('/api/setPersonalInfo', async (req: Request, res: Response) => {
     const id = req.query.id;
     try {
-        let statement =  `INSERT INTO ${personalInfos} (id) VALUES ("${id}")`;
+        let statement =  `INSERT INTO ${personalInfos} (id) VALUES (?1)`;
         console.log('Before query:', db); // Log the value of db before the query
-        const results = await insert(db, statement, []); // pass null if there are no parameters
+        const results = await insert(db, statement, [id]); // pass null if there are no parameters
         res.json(results);
     }
     catch (e) {
@@ -82,12 +82,12 @@ app.get('/api/setPersonalInfo', async (req: Request, res: Response) => {
     }
 });
 app.get('/api/setScore', async (req: Request, res: Response) => {
-    const address = req.query.address;
+    const id = req.query.id;
     const score = req.query.score;
     try {
-        let statement =  `INSERT INTO ${scoreboard} (id, wallet, score) VALUES ("1", "${address}", ${score})`;
+        let statement =  `INSERT INTO ${scoreboard} (id, score) VALUES (?1, ?2)`;
         console.log('Before query:', db); // Log the value of db before the query
-        const results = await insert(db, statement, []); // pass null if there are no parameters
+        const results = await insert(db, statement, [id, score]); // pass null if there are no parameters
         res.json(results);
     } catch (e) {
         console.log("Error setting score: " + e);
@@ -95,12 +95,12 @@ app.get('/api/setScore', async (req: Request, res: Response) => {
     }
     });
 app.get('/api/updateScore', async (req: Request, res: Response) => {
-    const address = req.query.address;
+    const id = req.query.id;
     const score = req.query.score;
     try {
-        let statement =  `UPDATE ${scoreboard} SET score = ${score} WHERE id = "${address}"`;
+        let statement =  `UPDATE ${scoreboard} SET score = ?1 WHERE id = ?2`;
         console.log('Before query:', db); // Log the value of db before the query
-        const results = await update(db, statement, []); // pass null if there are no parameters
+        const results = await update(db, statement, [score, id]); // pass null if there are no parameters
         res.json(results);
     } catch (e) {
         console.log("Error updating score: " + e);
@@ -108,16 +108,29 @@ app.get('/api/updateScore', async (req: Request, res: Response) => {
     }
 });
 app.get('/api/setBalance', async (req: Request, res: Response) => {
-    const address = req.query.address;
+    const id = req.query.id;
     const balance = req.query.balance;
     try {
-        let statement =  `UPDATE ${personalInfos} SET balance = ${balance} WHERE id = "${address}"`;
+        let statement =  `UPDATE ${personalInfos} SET balance = ?1 WHERE id = ?2`;
         console.log('Before query:', db); // Log the value of db before the query
-        const results = await update(db, statement, []); // pass null if there are no parameters
+        const results = await update(db, statement, [balance, id]); // pass null if there are no parameters
         res.json(results);
     } catch (e) {
         console.log("Error setting balance: " + e);
         res.status(500).json({ error: 'Error setting balance' });
+    }
+});
+app.get("/api/setGameRights", async (req: Request, res: Response) => {
+    const id = req.query.id;
+    const gameRights = req.query.gameRights;
+    try {
+      let statement = `UPDATE ${personalInfos} SET gameRights = ? WHERE id = ?`;
+      console.log("Before query:", db); // Log the value of db before the query
+      const results = await update(db, statement, [gameRights, id]); // pass null if there are no parameters
+      res.json(results);
+    } catch (e) {
+      console.log("Error setting game rights: " + e);
+      res.status(500).json({ error: "Error setting game rights" });
     }
 });
 

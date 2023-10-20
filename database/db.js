@@ -58,6 +58,7 @@ export const createPersonalInfoTable = async (db: Database) => {
 const insert = (db, statement, values) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
+        console.log("statement", statement);
         // Insert row into a table
         const { meta: insert } = yield db.prepare(statement).bind(values).run();
         // wait for tx finality
@@ -80,6 +81,7 @@ exports.query = query;
 const update = (db, statement, values) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     try {
+        console.log("statement", statement);
         // Update a row into the table
         const { meta: update } = yield db
             .prepare(statement)
