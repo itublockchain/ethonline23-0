@@ -7,12 +7,18 @@ const privateKey = process.env.TABLELAND_PRIVATE_KEY;
 
 export const setUpDB = async () => {
     const wallet = new Wallet(privateKey!);
+<<<<<<< Updated upstream
     const provider = new providers.JsonRpcProvider(process.env.MUMBAI_RPC); // Local tableland or polygonMumbai
     const baseSigner = wallet.connect(provider);
     const signer = new NonceManager(baseSigner); // Using nonceManager to handle local tableland node
   
     // Default to grabbing a wallet connection in a browser
     const db = new Database({signer});
+=======
+    const provider = new providers.JsonRpcProvider(process.env.NEXT_PUBLIC_MUMBAI_RPC); // Local tableland or polygonMumbai
+    const signer = wallet.connect(provider);  
+    const db = new Database({signer, autoWait: true});
+>>>>>>> Stashed changes
 
     return db
 }

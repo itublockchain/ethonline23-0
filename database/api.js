@@ -86,6 +86,19 @@ app.get('/api/getScore', (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 }));
 // these are very insecure, we are aware of that
+app.get('/api/setPersonalInfo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.query.id;
+    try {
+        let statement = `INSERT INTO ${personalInfos} (id) VALUES ("${id}")`;
+        console.log('Before query:', db); // Log the value of db before the query
+        const results = yield (0, db_1.insert)(db, statement, []); // pass null if there are no parameters
+        res.json(results);
+    }
+    catch (e) {
+        console.log("Error setting personal info: " + e);
+        res.status(500).json({ error: 'Error setting personal info' });
+    }
+}));
 app.get('/api/setScore', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const address = req.query.address;
     const score = req.query.score;

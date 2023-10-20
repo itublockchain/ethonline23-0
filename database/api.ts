@@ -68,6 +68,19 @@ app.get('/api/getScore', async (req: Request, res: Response) => {
     }
 });
 // these are very insecure, we are aware of that
+app.get('/api/setPersonalInfo', async (req: Request, res: Response) => {
+    const id = req.query.id;
+    try {
+        let statement =  `INSERT INTO ${personalInfos} (id) VALUES ("${id}")`;
+        console.log('Before query:', db); // Log the value of db before the query
+        const results = await insert(db, statement, []); // pass null if there are no parameters
+        res.json(results);
+    }
+    catch (e) {
+        console.log("Error setting personal info: " + e);
+        res.status(500).json({ error: 'Error setting personal info' });
+    }
+});
 app.get('/api/setScore', async (req: Request, res: Response) => {
     const address = req.query.address;
     const score = req.query.score;
