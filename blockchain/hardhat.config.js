@@ -1,15 +1,17 @@
-require('dotenv').config();
-require("@nomiclabs/hardhat-ethers");
-require("@nomiclabs/hardhat-etherscan");
+require("hardhat-deploy");
+require("dotenv").config();
+require("@nomicfoundation/hardhat-ethers");
+
 
 module.exports = {
-  defaultNetwork: "polygon_mumbai",
+  defaultNetwork: "goerli",
   networks: {
     hardhat: {
+
     },
-    polygon_mumbai: {
-      url: "https://rpc-mumbai.maticvigil.com",
-      accounts: [process.env.PRIVATE_KEY]
+    goerli: {
+      url: "https://eth-goerli.g.alchemy.com/v2/EHD2gQtDUtW4gM6jJ58QcI13oyVzxEm8",
+      accounts: ["82e7939157b2d1640f0ab6ae871b1b73152069f35837b000c3c47c54574d610f"],
     }
   },
   etherscan: {

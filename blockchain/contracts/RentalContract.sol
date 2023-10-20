@@ -17,6 +17,7 @@ contract RentalContract {
     }
 
     mapping(uint256 => Rental) public rentals;
+    mapping(address => uint256) public addressToTokenId;
 
     constructor(address _bayc, address _apeCoin, address _vaultAddress) {
         bayc = IERC721(_bayc);
@@ -36,6 +37,7 @@ contract RentalContract {
             price: price,
             endTime: block.timestamp + duration
         });
+
     }
 
     function rent(uint256 tokenId) external {
@@ -52,11 +54,25 @@ contract RentalContract {
             "Payment to vault failed"
         );
         rental.renter = msg.sender;
+    
     }
 
     function endRental(uint256 tokenId) external {
         Rental storage rental = rentals[tokenId];
-        require(block.timestamp >= rental.endTime, "Rental period not ended yet");
+        require(
+            block.timestamp >= rental.endTime,
+            "Rental period not ended yet"
+        );
         rental.renter = address(0);
+    }
+
+    function isRented(uint256 tokenId) public view returns (bool) {
+        return rentals[tokenId].renter != address(0);
+    }
+
+    function getRentalDetails(
+        uint256 tokenId
+    ) public view returns (Rental memory) {
+        return rentals[tokenId];
     }
 }
