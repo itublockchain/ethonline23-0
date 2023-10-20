@@ -26,7 +26,6 @@ const ClientConfig = z.object({
 	TABLELAND_PRIVATE_KEY: z.string(),
 	RELAY_API: z.string(),
 	ERC20_SENDER_PRIVATE_KEY: z.string(),
-
 })
 
 const clientConfig = ClientConfig.parse({
