@@ -50,15 +50,15 @@ export default function Landing() {
 
 	return (
 		<>
-			<div className="w-full h-screen bg-green-7 flex justify-center items-center p-8">
-				<div className="w-full h-full flex justify-center items-center p-8 bg-green-8">
-					<div className="w-full h-full bg-green-10 flex flex-col justify-around">
+			<div className="w-full h-screen bg-jade-8 flex justify-center items-center p-8">
+				<div className="w-full h-full flex justify-center items-center p-8 bg-jade-9">
+					<div className="w-full h-full bg-jade-10 flex flex-col justify-around">
 						<div className="flex justify-around">
 							<Image src={logo} alt="logo" width={400} height={300} />
 							<div className="text-white text-9xl">
 								<h1>LET'S PLAY</h1>
-								<h1>LET'S PLAY</h1>
-								<h1>LET'S PLAY</h1>
+								<h1 className="text-jade-9">LET'S PLAY</h1>
+								<h1 className="text-jade-8">LET'S PLAY</h1>
 							</div>
 						</div>
 						<div className="flex flex-col justify-center items-center">
@@ -67,7 +67,7 @@ export default function Landing() {
 								variant="link"
 								className={
 									"w-72 text-3xl text-white " +
-									(selected === 0 ? "bg-green-4" : "")
+									(selected === 0 ? "bg-white/50" : "")
 								}
 							>
 								CREATE AN ACCOUNT
@@ -77,7 +77,7 @@ export default function Landing() {
 								variant="link"
 								className={
 									"w-72 text-3xl text-white " +
-									(selected === 1 ? "bg-green-4" : "")
+									(selected === 1 ? "bg-white/50" : "")
 								}
 							>
 								I HAVE AN ACCOUNT

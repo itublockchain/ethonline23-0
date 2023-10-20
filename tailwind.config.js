@@ -48,19 +48,19 @@ module.exports = {
 			// https://www.radix-ui.com/colors
 			// Refer to this important Radix documentation on how to use these color scale:
 			// https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale
-			green: {
-				1: "var(--green-1)",
-				2: "var(--green-2)",
-				3: "var(--green-3)",
-				4: "var(--green-4)",
-				5: "var(--green-5)",
-				6: "var(--green-6)",
-				7: "var(--green-7)",
-				8: "var(--green-8)",
-				9: "var(--green-9)",
-				10: "var(--green-10)",
-				11: "var(--green-11)",
-				12: "var(--green-12)",
+			jade: {
+				1: "var(--jade-1)",
+				2: "var(--jade-2)",
+				3: "var(--jade-3)",
+				4: "var(--jade-4)",
+				5: "var(--jade-5)",
+				6: "var(--jade-6)",
+				7: "var(--jade-7)",
+				8: "var(--jade-8)",
+				9: "var(--jade-9)",
+				10: "var(--jade-10)",
+				11: "var(--jade-11)",
+				12: "var(--jade-12)",
 			},
 			sage: {
 				1: "var(--sage-1)",
@@ -97,18 +97,18 @@ module.exports = {
 			/* Border color for inputs such as <Input />, <Select />, <Textarea /> */
 			input: "var(--sage-7)", // Radix suggests 6 for "Borders on interactive components."
 			/* Used for focus ring */
-			ring: "var(--green-7)", // Radix suggests 7 for "UI element border and focus rings"
+			ring: "var(--jade-7)", // Radix suggests 7 for "UI element border and focus rings"
 			/* Default background color of <body />...etc */
 			background: "var(--sage-1)", // Radix suggests 1 for "App background"
 			foreground: "var(--sage-11)", // Radix suggests 11 for "Low-contrast text"
 			/* Primary colors for <Button /> */
 			primary: {
-				DEFAULT: "var(--green-12)", // has a the best contrast still having a green clue
+				DEFAULT: "var(--jade-12)", // has a the best contrast still having a jade clue
 				foreground: "black", // shadcn/ui uses black or white depending on the contrast
 			},
 			/* Secondary colors for <Button /> */
 			secondary: {
-				DEFAULT: "var(--green-9)", // has a low contrast but uses the theme color
+				DEFAULT: "var(--jade-9)", // has a low contrast but uses the theme color
 				foreground: "white", // shadcn/ui uses black or white depending on the contrast
 			},
 			/* Used for destructive actions such as <Button variant="destructive"> */
@@ -124,7 +124,7 @@ module.exports = {
 			/* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
 			/* Note: These are also used for ghost buttons */
 			accent: {
-				DEFAULT: "var(--green-4)", // Radix suggests 4 for "Hovered UI element background"
+				DEFAULT: "var(--jade-4)", // Radix suggests 4 for "Hovered UI element background"
 				foreground: "var(--sage-11)", // Using the default foreground
 			},
 			/* Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover /> */
