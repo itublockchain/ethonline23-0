@@ -12,22 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.update = exports.query = exports.insert = exports.setUpDB = void 0;
 const sdk_1 = require("@tableland/sdk");
 const ethers_1 = require("ethers");
-const experimental_1 = require("@ethersproject/experimental");
 require("dotenv").config();
-const privateKey = process.env.TABLELAND_PRIVATE_KEY;
+const privateKey = process.env.NEXT_PUBLIC_TABLELAND_PRIVATE_KEY;
 const setUpDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const wallet = new ethers_1.Wallet(privateKey);
-<<<<<<< Updated upstream
-    const provider = new ethers_1.providers.JsonRpcProvider(process.env.MUMBAI_RPC); // Local tableland or polygonMumbai
-    const baseSigner = wallet.connect(provider);
-    const signer = new experimental_1.NonceManager(baseSigner); // Using nonceManager to handle local tableland node
-    // Default to grabbing a wallet connection in a browser
-    const db = new sdk_1.Database({ signer });
-=======
     const provider = new ethers_1.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_MUMBAI_RPC); // Local tableland or polygonMumbai
     const signer = wallet.connect(provider);
     const db = new sdk_1.Database({ signer, autoWait: true });
->>>>>>> Stashed changes
     return db;
 });
 exports.setUpDB = setUpDB;
@@ -67,6 +58,7 @@ export const createPersonalInfoTable = async (db: Database) => {
 const insert = (db, statement, values) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
+        console.log("statement", statement);
         // Insert row into a table
         const { meta: insert } = yield db.prepare(statement).bind(values).run();
         // wait for tx finality
@@ -89,6 +81,7 @@ exports.query = query;
 const update = (db, statement, values) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     try {
+        console.log("statement", statement);
         // Update a row into the table
         const { meta: update } = yield db
             .prepare(statement)
