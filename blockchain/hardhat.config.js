@@ -10,8 +10,8 @@ module.exports = {
 
     },
     goerli: {
-      url: "https://eth-goerli.g.alchemy.com/v2/EHD2gQtDUtW4gM6jJ58QcI13oyVzxEm8",
-      accounts: ["82e7939157b2d1640f0ab6ae871b1b73152069f35837b000c3c47c54574d610f"],
+      url: "rpc",
+      accounts: ["pk"],
     }
   },
   etherscan: {
