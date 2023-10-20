@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
 // This contract facilitates a rental marketplace for ERC721 tokens (like BAYC) using an ERC20 token (like apeCoin) for payment.
 
 // Importing interfaces for ERC721 and ERC20 standards from the OpenZeppelin library.
