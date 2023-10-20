@@ -29,9 +29,9 @@ export default function Landing() {
                 break;
               case "Enter":
                 if (selected === 0) {
-                    router.push("/landing")
+                    router.push("/login")
                 } else {
-                    router.push("/landing")
+                    router.push("/login")
                 }
                 break;
               default:
@@ -66,8 +66,8 @@ export default function Landing() {
                     </div>
                 </div>
                 <div className="flex flex-col justify-center items-center">
-                    <button onClick={() => router.push("/landing")} className={"w-72 text-3xl text-white " + (selected === 0 ? "bg-lime-500" : "")}>CREATE AN ACCOUNT</button>
-                    <button onClick={() => router.push("/landing")} className={"w-72 text-3xl text-white " + (selected === 1 ? "bg-lime-500" : "")}>I HAVE AN ACCOUNT</button>
+                    <button onClick={() => router.push("/login")} className={"w-72 text-3xl text-white " + (selected === 0 ? "bg-lime-500" : "")}>CREATE AN ACCOUNT</button>
+                    <button onClick={() => router.push("/login")} className={"w-72 text-3xl text-white " + (selected === 1 ? "bg-lime-500" : "")}>I HAVE AN ACCOUNT</button>
                 </div>
             </div>
         </div>

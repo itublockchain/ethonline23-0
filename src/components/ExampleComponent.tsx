@@ -116,7 +116,7 @@ export default function ExampleComponent() {
 
 	useEffect(() => {
 		if (web3AuthModalPack && web3AuthModalPack.getProvider()) {
-			;(async () => {
+			(async () => {
 				await login()
 			})()
 		}
