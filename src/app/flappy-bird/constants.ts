@@ -22,7 +22,7 @@ export const HEIGHT_GROUND = 59
 // pipes
 export const PIPE_WIDTH = 40
 export const PIPE_HEIGHT = CANVAS_HEIGHT / 2
-export const PIPE_GAP = CANVAS_HEIGHT / 2 - HEIGHT_GROUND - 50
+export const PIPE_GAP = CANVAS_HEIGHT / 2.2 - HEIGHT_GROUND - 50
 
 // movements
 export const JUMP_SPEED = -200
