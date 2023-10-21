@@ -23,6 +23,7 @@ import Safe, {
 	SafeAccountConfig,
 	SafeDeploymentConfig,
 	PredictedSafeProps,
+	getSafeContract,
 } from "@safe-global/protocol-kit"
 import {
 	MetaTransactionData,
@@ -163,7 +164,7 @@ export default function ExampleComponent() {
 			console.log("signer", signer)
 			const ethAdapter = new EthersAdapter({
 				ethers,
-				signerOrProvider: signer || provider,
+				signerOrProvider: signer,
 			})
 			const eoaAddress = await signer.getAddress()
 			const safeAccountConfig: SafeAccountConfig = {
@@ -184,10 +185,14 @@ export default function ExampleComponent() {
 			}
 			const safeSdk: Safe = await Safe.create({ ethAdapter, predictedSafe })
 			const safeAddress = await safeSdk.getAddress()
+			setStateSafeAddress(safeAddress)
 			const testing = await provider.getCode(safeAddress)
 			console.log("testing", testing)
 			console.log("safeAddress", safeAddress)
-			const relayKit = new GelatoRelayPack(process.env.RELAY_API!)
+			const safeApiKit = new SafeApiKit({
+				txServiceUrl: "https://safe-transaction-goerli.safe.global",
+				ethAdapter,
+			})
 			if (testing == "0x") {
 				await sendGoerliEther(eoaAddress)
 
@@ -198,81 +203,104 @@ export default function ExampleComponent() {
 				})
 				const newSafeAddress = await safeSdk.getAddress()
 				console.log("newSafeAddress", newSafeAddress)
-				const safeApiKit = new SafeApiKit({
-					txServiceUrl: "https://safe-transaction-goerli.safe.global",
-					ethAdapter,
-				})
 				safeApiKit.getSafeCreationInfo(safeAddress).then((res) => {
 					console.log("res", res)
 				})
 				setIsSafeDeployed(true)
 			}
+			const pendingTransactions = await safeApiKit.getPendingTransactions(safeAddress)
+			console.log("pendingTransactions", pendingTransactions)
 		}
 		safe()
 	}, [signerAddress, web3AuthModalPack])
 	const tx = async () => {
+	try {
 		if (!web3AuthModalPack) return
-		const provider = new ethers.providers.Web3Provider(
-			web3AuthModalPack.getProvider() as any
-			)
+
+		const provider = new ethers.providers.Web3Provider(web3AuthModalPack.getProvider() as any)
 		const wallet = new ethers.Wallet(clientConfig.PRIVATE_KEY, provider)
-		const signer = provider.getSigner()
-		const relayKit = new GelatoRelayPack(clientConfig.RELAY_API)
-		const ethAdapter = new EthersAdapter({
-			ethers,
-			signerOrProvider: signer || provider,
-		})
-		const ethAdapter2 = new EthersAdapter({
-			ethers,
-			signerOrProvider: wallet,
-		})
-		const safeAccountConfig: SafeAccountConfig = {
-			owners: [(await signer.getAddress()).toString(), clientConfig.ADDRESS],
-			threshold: 1,
+		const signer1 = provider.getSigner()
+		const signer2 = wallet.connect(provider)
+
+		const safeTransactionData: MetaTransactionData = {
+			to: stateSafeAddress,
+			data: "0x",
+			value: BigNumber.from(ethers.utils.parseEther("0.0000001")).toString(),
 		}
-		let saltNonce = window.localStorage.getItem("saltNonce")
-		if (!saltNonce) {
-			saltNonce = crypto.getRandomValues(new Uint8Array(8)).join("")
-			window.localStorage.setItem("saltNonce", saltNonce)
-		}
-		const SafeDeploymentConfig: SafeDeploymentConfig = {
-			saltNonce: saltNonce,
-		}
-		const predictedSafe: PredictedSafeProps = {
-			safeAccountConfig: safeAccountConfig,
-			safeDeploymentConfig: SafeDeploymentConfig,
-		}
-		const safeSdk: Safe = await Safe.create({ ethAdapter, predictedSafe })
-		const safeSdkforSign: Safe = await Safe.create({ ethAdapter: ethAdapter2, predictedSafe })
-		const txSafeAddress = await safeSdk.getAddress()
-		const transactions: MetaTransactionData[] = [
-			{
-				to: txSafeAddress,
-				data: "0x",
-				value: BigNumber.from(ethers.utils.parseEther("0.000000001")).toString(),
-			}
-		]
+		
 		const options: MetaTransactionOptions = {
-			isSponsored: true,
-			gasLimit: "3000000",
+			gasLimit: '300000',
+			isSponsored: true
 		}
-		const safeTransaction = await relayKit.createRelayedTransaction({
-			safe: safeSdk,
-			transactions,
-			options,
+
+		const ethAdapterSigner1 = new EthersAdapter({
+			ethers,
+			signerOrProvider: signer1,
 		})
-		const signedSafeTransaction2 = await safeSdkforSign.signTransaction(safeTransaction)
-		console.log("signedSafeTransaction2", signedSafeTransaction2)
-		const signedSafeTransaction = await safeSdk.signTransaction(safeTransaction)
-		console.log("signedSafeTransaction", signedSafeTransaction)
-		const response = await relayKit.executeRelayTransaction(
-			signedSafeTransaction2,
-			safeSdk,
+
+		const ethAdapterSigner2 = new EthersAdapter({
+			ethers,
+			signerOrProvider: signer2,
+		})
+
+		const safeSdkSigner1 = await Safe.create({ ethAdapter: ethAdapterSigner1, safeAddress: stateSafeAddress })
+		const safeSdkSigner2 = await Safe.create({ ethAdapter: ethAdapterSigner2, safeAddress: stateSafeAddress })
+		
+		const safeService = new SafeApiKit({
+			txServiceUrl: "https://safe-transaction-goerli.safe.global",
+			ethAdapter: ethAdapterSigner1,
+		})
+
+		const tx = await safeSdkSigner1.createTransaction({ safeTransactionData })
+		const txHash = await safeSdkSigner1.getTransactionHash(tx)
+		const signature = await safeSdkSigner1.signTransactionHash(txHash)
+
+		await safeService.proposeTransaction({
+			safeAddress: stateSafeAddress,
+			safeTransactionData: tx.data,
+			safeTxHash: txHash,
+			senderAddress: await signer1.getAddress(),
+			senderSignature: signature.data,
+		})
+
+		const pendingTransactions = (await safeService.getPendingTransactions(stateSafeAddress)).results
+
+		const transaction = pendingTransactions[0]
+		const transactionHash = transaction.safeTxHash
+
+		const tx2 = await safeService.getTransaction(transactionHash)
+		await safeSdkSigner2.signTransactionHash(transactionHash)
+
+		const signedSafeTx = await safeSdkSigner2.signTransaction(tx2)
+
+		const safeSingleton = await getSafeContract({ethAdapter: ethAdapterSigner2, safeVersion: await safeSdkSigner2.getContractVersion()})
+
+		const encodedTx = safeSingleton.encode("execTransaction", [
+			signedSafeTx.data.to,
+			signedSafeTx.data.value,
+			signedSafeTx.data.data,
+			signedSafeTx.data.operation,
+			signedSafeTx.data.safeTxGas,
+			signedSafeTx.data.baseGas,
+			signedSafeTx.data.gasPrice,
+			signedSafeTx.data.gasToken,
+			signedSafeTx.data.refundReceiver,
+			signedSafeTx.encodedSignatures(),
+			])
+
+		const relayTx = {
+			target: stateSafeAddress,
+			encodedTransaction: encodedTx,
+			chainId: parseInt("0x05"), // for goerli
 			options
-		)
-		console.log(
-			`Relay Transaction Task ID: https://relay.gelato.digital/tasks/status/${response.taskId}`
-		)
+		}
+
+		const relayKit = new GelatoRelayPack(clientConfig.RELAY_API)
+		const response = await relayKit.relayTransaction(relayTx)
+		console.log(`Relay Transaction Task ID: https://relay.gelato.digital/tasks/status/${response.taskId}`)
+	} catch (error) {
+		console.log(error)
+	}
 	}
 	return (
 		<>
