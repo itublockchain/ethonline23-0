@@ -11,8 +11,6 @@ import {
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter"
 import { Web3AuthOptions } from "@web3auth/modal"
 import { Box, Divider, Grid, Typography } from "@mui/material"
-
-import AppBar from "./AppBar"
 import { ethers } from "ethers"
 
 import { GelatoRelayPack } from "@safe-global/relay-kit"
@@ -52,7 +50,6 @@ export default function ExampleComponent() {
 	const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(
 		null
 	)
-	console.log(clientConfig)
 	useEffect(() => {
 		;(async () => {
 			const options: Web3AuthOptions = {
@@ -116,7 +113,7 @@ export default function ExampleComponent() {
 
 	useEffect(() => {
 		if (web3AuthModalPack && web3AuthModalPack.getProvider()) {
-			(async () => {
+			;(async () => {
 				await login()
 			})()
 		}
@@ -268,12 +265,6 @@ export default function ExampleComponent() {
 	}
 	return (
 		<>
-			<AppBar
-				onLogin={login}
-				onLogout={logout}
-				userInfo={userInfo}
-				isLoggedIn={!!provider}
-			/>
 			{safeAuthSignInResponse?.eoa && (
 				<Grid container>
 					<button onClick={tx}>tx</button>
@@ -319,67 +310,3 @@ const getPrefix = (chainId: string) => {
 			return "eth"
 	}
 }
-
-// 	const options: Web3AuthOptions = {
-// 		clientId:
-// 			"BMVbCJGKTNafy5v4B8zf6W87bLvV53uP4ZAF5b7u1eKjBJ9hO8tjCrec2PsI5bwPpqqG0_gI6ZtMl1s624Dvo5s",
-// 		web3AuthNetwork: "testnet",
-// 		chainConfig: {
-// 			chainNamespace: CHAIN_NAMESPACES.EIP155,
-// 			//chainId: '0x13881',
-// 			chainId: "0x5",
-// 			//rpcTarget: 'https://polygon-mumbai-bor.publicnode.com'
-// 			rpcTarget: "https://rpc.ankr.com/eth_goerli",
-// 		},
-// 		uiConfig: {
-// 			theme: "dark",
-// 			loginMethodsOrder: ["google", "facebook"],
-// 		},
-// 	};
-
-// 	// https://web3auth.io/docs/sdk/pnp/web/modal/initialize#configuring-adapters
-// 	const modalConfig = {
-// 		[WALLET_ADAPTERS.METAMASK]: {
-// 			label: "metamask",
-// 			showOnDesktop: true,
-// 			showOnMobile: false,
-// 		},
-// 	};
-
-// 	// https://web3auth.io/docs/sdk/pnp/web/modal/whitelabel#whitelabeling-while-modal-initialization
-// 	const openloginAdapter = new OpenloginAdapter({
-// 		loginSettings: {
-// 			mfaLevel: "mandatory",
-// 		},
-// 		adapterSettings: {
-// 			uxMode: "popup",
-// 			whiteLabel: {
-// 				name: "Safe",
-// 			},
-// 		},
-// 	});
-
-// 	const web3AuthConfig: Web3AuthConfig = {
-// 		txServiceUrl: "https://safe-transaction-goerli.safe.global",
-// 	};
-
-// 	// Instantiate and initialize the pack
-// 	const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig);
-// 	await web3AuthModalPack.init({
-// 		options,
-// 		adapters: [openloginAdapter],
-// 		modalConfig,
-// 	});
-
-// 	const authKitSignData = await web3AuthModalPack.signIn();
-
-// 	web3AuthModalPack.subscribe(ADAPTER_EVENTS.CONNECTED, () => {
-// 		console.log("User is authenticated");
-// 	});
-
-// 	web3AuthModalPack.subscribe(ADAPTER_EVENTS.DISCONNECTED, () => {
-// 		console.log("User is not authenticated");
-// 	});
-
-// 	return <div>aaaaaASDLASDLKAJDSLKJAL</div>;
-// }

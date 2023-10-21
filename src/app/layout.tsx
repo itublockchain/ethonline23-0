@@ -1,7 +1,8 @@
 import "./globals.css"
 import type { Metadata } from "next"
-
 import { VT323 } from "next/font/google"
+import { Navbar } from "@/components"
+import { ContextProvider } from "@/context"
 
 const VT323Font = VT323({
 	weight: "400",
@@ -21,7 +22,12 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en" className="dark">
-			<body className={VT323Font.className}>{children}</body>
+			<body className={VT323Font.className}>
+				<ContextProvider>
+					<Navbar />
+					{children}
+				</ContextProvider>
+			</body>
 		</html>
 	)
 }

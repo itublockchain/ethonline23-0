@@ -26,6 +26,7 @@ const ClientConfig = z.object({
 	TABLELAND_PRIVATE_KEY: z.string(),
 	RELAY_API: z.string(),
 	ERC20_SENDER_PRIVATE_KEY: z.string(),
+	WEB3_AUTH_CLIENT_ID: z.string(),
 })
 
 const clientConfig = ClientConfig.parse({
@@ -34,6 +35,7 @@ const clientConfig = ClientConfig.parse({
 	TABLELAND_PRIVATE_KEY: process.env.NEXT_PUBLIC_TABLELAND_PRIVATE_KEY!,
 	RELAY_API: process.env.NEXT_PUBLIC_RELAY_API!,
 	ERC20_SENDER_PRIVATE_KEY: process.env.NEXT_PUBLIC_ERC20_SENDER_PRIVATE_KEY!,
+	WEB3_AUTH_CLIENT_ID: process.env.NEXT_PUBLIC_WEB3_AUTH_CLIENT_ID!,
 })
 
 const isServer = typeof window === "undefined"
