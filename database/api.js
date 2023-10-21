@@ -20,7 +20,7 @@ const port = 3002;
 app.use(express_1.default.static("public"));
 app.use(express_1.default.json());
 let personalInfos = "personalinfoss_80001_7978";
-let scoreboard = "game2_80001_7933";
+let scoreboard = "gamelast_80001_8061";
 const setup = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("setting up db");
     db = yield (0, db_1.setUpDB)();
@@ -81,11 +81,11 @@ app.get('/api/getScore', (req, res) => __awaiter(void 0, void 0, void 0, functio
 app.get('/api/setPersonalInfo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.query.id;
     const balance = req.query.balance;
-    const gameRights = req.query.gameRights;
+    const gamerights = req.query.gamerights;
     try {
         let statement = `INSERT INTO ${personalInfos} (id, balance, gamerights) VALUES (?1,?2,?3)`;
         console.log('Before query:', db); // Log the value of db before the query
-        const results = yield (0, db_1.insert)(db, statement, [id, balance, gameRights]); // pass null if there are no parameters
+        const results = yield (0, db_1.insert)(db, statement, [id, balance, gamerights]); // pass null if there are no parameters
         res.json(results);
     }
     catch (e) {
@@ -137,11 +137,11 @@ app.get('/api/setBalance', (req, res) => __awaiter(void 0, void 0, void 0, funct
 }));
 app.get("/api/setGameRights", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.query.id;
-    const gameRights = req.query.gameRights;
+    const gamerights = req.query.gamerights;
     try {
         let statement = `UPDATE ${personalInfos} SET gamerights = ?1 WHERE id = ?2`;
         console.log("Before query:", db); // Log the value of db before the query
-        const results = yield (0, db_1.update)(db, statement, [gameRights, id]); // pass null if there are no parameters
+        const results = yield (0, db_1.update)(db, statement, [gamerights, id]); // pass null if there are no parameters
         res.json(results);
     }
     catch (e) {

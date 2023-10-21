@@ -12,7 +12,7 @@ app.use(express.static("public"));
 app.use(express.json());
 
 let personalInfos: string = "personalinfoss_80001_7978";
-let scoreboard: string = "game2_80001_7933";
+let scoreboard: string = "gamelast_80001_8061";
 
 const setup = async () => {
     console.log("setting up db");
@@ -71,11 +71,11 @@ app.get('/api/getScore', async (req: Request, res: Response) => {
 app.get('/api/setPersonalInfo', async (req: Request, res: Response) => {
     const id = req.query.id;
     const balance = req.query.balance;
-    const gameRights = req.query.gameRights;
+    const gamerights = req.query.gamerights;
     try {
         let statement =  `INSERT INTO ${personalInfos} (id, balance, gamerights) VALUES (?1,?2,?3)`;
         console.log('Before query:', db); // Log the value of db before the query
-        const results = await insert(db, statement, [id, balance, gameRights]); // pass null if there are no parameters
+        const results = await insert(db, statement, [id, balance, gamerights]); // pass null if there are no parameters
         res.json(results);
     }
     catch (e) {
@@ -124,11 +124,11 @@ app.get('/api/setBalance', async (req: Request, res: Response) => {
 });
 app.get("/api/setGameRights", async (req: Request, res: Response) => {
     const id = req.query.id;
-    const gameRights = req.query.gameRights;
+    const gamerights = req.query.gamerights;
     try {
       let statement = `UPDATE ${personalInfos} SET gamerights = ?1 WHERE id = ?2`;
       console.log("Before query:", db); // Log the value of db before the query
-      const results = await update(db, statement, [gameRights, id]); // pass null if there are no parameters
+      const results = await update(db, statement, [gamerights, id]); // pass null if there are no parameters
       res.json(results);
     } catch (e) {
       console.log("Error setting game rights: " + e);
