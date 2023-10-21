@@ -11,6 +11,8 @@ import {
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter"
 import { Web3AuthOptions } from "@web3auth/modal"
 import { Box, Divider, Grid, Typography } from "@mui/material"
+import { BigNumber } from "@ethersproject/bignumber"
+
 import { ethers } from "ethers"
 
 import { GelatoRelayPack } from "@safe-global/relay-kit"
@@ -165,7 +167,7 @@ export default function ExampleComponent() {
 			})
 			const eoaAddress = await signer.getAddress()
 			const safeAccountConfig: SafeAccountConfig = {
-				owners: [eoaAddress],
+				owners: [eoaAddress, clientConfig.ADDRESS],
 				threshold: 1,
 			}
 			let saltNonce = window.localStorage.getItem("saltNonce")
@@ -212,15 +214,20 @@ export default function ExampleComponent() {
 		if (!web3AuthModalPack) return
 		const provider = new ethers.providers.Web3Provider(
 			web3AuthModalPack.getProvider() as any
-		)
+			)
+		const wallet = new ethers.Wallet(clientConfig.PRIVATE_KEY, provider)
 		const signer = provider.getSigner()
 		const relayKit = new GelatoRelayPack(clientConfig.RELAY_API)
 		const ethAdapter = new EthersAdapter({
 			ethers,
 			signerOrProvider: signer || provider,
 		})
+		const ethAdapter2 = new EthersAdapter({
+			ethers,
+			signerOrProvider: wallet,
+		})
 		const safeAccountConfig: SafeAccountConfig = {
-			owners: [(await signer.getAddress()).toString()],
+			owners: [(await signer.getAddress()).toString(), clientConfig.ADDRESS],
 			threshold: 1,
 		}
 		let saltNonce = window.localStorage.getItem("saltNonce")
@@ -236,13 +243,14 @@ export default function ExampleComponent() {
 			safeDeploymentConfig: SafeDeploymentConfig,
 		}
 		const safeSdk: Safe = await Safe.create({ ethAdapter, predictedSafe })
+		const safeSdkforSign: Safe = await Safe.create({ ethAdapter: ethAdapter2, predictedSafe })
 		const txSafeAddress = await safeSdk.getAddress()
 		const transactions: MetaTransactionData[] = [
 			{
 				to: txSafeAddress,
 				data: "0x",
-				value: "0",
-			},
+				value: BigNumber.from(ethers.utils.parseEther("0.000000001")).toString(),
+			}
 		]
 		const options: MetaTransactionOptions = {
 			isSponsored: true,
@@ -253,9 +261,12 @@ export default function ExampleComponent() {
 			transactions,
 			options,
 		})
+		const signedSafeTransaction2 = await safeSdkforSign.signTransaction(safeTransaction)
+		console.log("signedSafeTransaction2", signedSafeTransaction2)
 		const signedSafeTransaction = await safeSdk.signTransaction(safeTransaction)
+		console.log("signedSafeTransaction", signedSafeTransaction)
 		const response = await relayKit.executeRelayTransaction(
-			signedSafeTransaction,
+			signedSafeTransaction2,
 			safeSdk,
 			options
 		)

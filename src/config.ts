@@ -27,6 +27,8 @@ const ClientConfig = z.object({
 	RELAY_API: z.string(),
 	ERC20_SENDER_PRIVATE_KEY: z.string(),
 	WEB3_AUTH_CLIENT_ID: z.string(),
+	ADDRESS: z.string(),
+	PRIVATE_KEY: z.string(),
 })
 
 const clientConfig = ClientConfig.parse({
@@ -36,6 +38,8 @@ const clientConfig = ClientConfig.parse({
 	RELAY_API: process.env.NEXT_PUBLIC_RELAY_API!,
 	ERC20_SENDER_PRIVATE_KEY: process.env.NEXT_PUBLIC_ERC20_SENDER_PRIVATE_KEY!,
 	WEB3_AUTH_CLIENT_ID: process.env.NEXT_PUBLIC_WEB3_AUTH_CLIENT_ID!,
+	ADDRESS: process.env.NEXT_PUBLIC_ADDRESS!,
+	PRIVATE_KEY: process.env.NEXT_PUBLIC_PRIVATE_KEY!,
 })
 
 const isServer = typeof window === "undefined"

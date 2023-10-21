@@ -8,6 +8,7 @@ declare global {
 			NEXT_PUBLIC_TABLELAND_PRIVATE_KEY: string
 			NEXT_PUBLIC_PRIVATE_KEY: string
 			NEXT_PUBLIC_RELAY_API: string
+			NEXT_PUBLIC_ADDRESS: string
 		}
 	}
 }

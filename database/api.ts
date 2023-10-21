@@ -11,7 +11,7 @@ const port = 3002
 app.use(express.static("public"));
 app.use(express.json());
 
-let personalInfos: string = "personalinfos3_80001_7931";
+let personalInfos: string = "personalinfoss_80001_7978";
 let scoreboard: string = "game2_80001_7933";
 
 const setup = async () => {
@@ -46,7 +46,7 @@ app.get('/api/getPersonalInfo', async (req: Request, res: Response) => {
 });
 app.get('/api/getScores', async (req: Request, res: Response) => {
     try {
-        let statement =  `SELECT * FROM ${scoreboard} `;
+        let statement =  `SELECT * FROM ${scoreboard} LIMIT 5`;
         console.log('Before query:', db); // Log the value of db before the query
         const results = await query(db, statement);
         res.json(results);
@@ -70,10 +70,12 @@ app.get('/api/getScore', async (req: Request, res: Response) => {
 // these are very insecure, we are aware of that
 app.get('/api/setPersonalInfo', async (req: Request, res: Response) => {
     const id = req.query.id;
+    const balance = req.query.balance;
+    const gameRights = req.query.gameRights;
     try {
-        let statement =  `INSERT INTO ${personalInfos} (id) VALUES (?1)`;
+        let statement =  `INSERT INTO ${personalInfos} (id, balance, gamerights) VALUES (?1,?2,?3)`;
         console.log('Before query:', db); // Log the value of db before the query
-        const results = await insert(db, statement, [id]); // pass null if there are no parameters
+        const results = await insert(db, statement, [id, balance, gameRights]); // pass null if there are no parameters
         res.json(results);
     }
     catch (e) {
@@ -124,7 +126,7 @@ app.get("/api/setGameRights", async (req: Request, res: Response) => {
     const id = req.query.id;
     const gameRights = req.query.gameRights;
     try {
-      let statement = `UPDATE ${personalInfos} SET gameRights = ? WHERE id = ?`;
+      let statement = `UPDATE ${personalInfos} SET gamerights = ?1 WHERE id = ?2`;
       console.log("Before query:", db); // Log the value of db before the query
       const results = await update(db, statement, [gameRights, id]); // pass null if there are no parameters
       res.json(results);
