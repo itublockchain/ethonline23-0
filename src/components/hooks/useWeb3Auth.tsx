@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import {
 	Web3AuthModalPack,
 	Web3AuthConfig,
@@ -15,6 +15,9 @@ import {
 	WALLET_ADAPTERS,
 } from "@web3auth/base"
 import { clientConfig } from "@/config"
+import { UserContext, WalletContext } from "@/context"
+import { useToast } from "../ui/use-toast"
+import { useRouter } from "next/navigation"
 
 // https://web3auth.io/docs/sdk/pnp/web/modal/initialize#arguments
 const options: Web3AuthOptions = {
@@ -63,13 +66,74 @@ const connectedHandler: Web3AuthEventListener = (data) =>
 const disconnectedHandler: Web3AuthEventListener = (data) =>
 	console.log("DISCONNECTED", data)
 
-interface NavbarProps {}
-
 function useWeb3Auth() {
-	// Instantiate and initialize the pack
 	const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig)
+	// Instantiate and initialize the pack
 	const provider = web3AuthModalPack.getProvider() as SafeEventEmitterProvider
 	const [web3AuthPack, setWeb3AuthPack] = useState<Web3AuthModalPack | null>()
+
+	const { setUser } = useContext(UserContext) as IUserContext
+	const { setWallet } = useContext(WalletContext) as IWalletContext
+
+	const { toast } = useToast()
+
+	const router = useRouter()
+
+	const login = () => {
+		web3AuthPack
+			?.signIn()
+			.then((wallets) => {
+				setWallet(wallets as Wallet)
+			})
+			.catch((err) => {
+				toast({
+					title: "Error",
+					description: err.message,
+					duration: 3000,
+				})
+			})
+			.then(() => {
+				web3AuthPack
+					.getUserInfo()
+					.then((userInfo) => {
+						console.log(userInfo)
+						setUser(userInfo as User)
+					})
+					.catch((err) => {
+						toast({
+							title: "Error",
+							description: err.message,
+							duration: 3000,
+						})
+					})
+			})
+	}
+
+	const logout = () => {
+		web3AuthPack
+			?.signOut()
+			.then(() => {
+				setWallet(null)
+			})
+			.catch((err) => {
+				toast({
+					title: "Error",
+					description: err.message,
+					duration: 3000,
+				})
+			})
+			.then(() => {
+				setUser(null)
+				router.push("/")
+			})
+			.catch((err) => {
+				toast({
+					title: "Error",
+					description: err.message,
+					duration: 3000,
+				})
+			})
+	}
 
 	useEffect(() => {
 		const init = async () => {
@@ -89,7 +153,7 @@ function useWeb3Auth() {
 		})
 	}, [])
 
-	return { web3AuthPack, provider }
+	return { web3AuthPack, provider, login, logout }
 }
 
 export default useWeb3Auth

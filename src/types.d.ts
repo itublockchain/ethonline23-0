@@ -30,10 +30,11 @@ type Wallet = {
 
 type IWalletContext = {
 	wallet: Wallet | null
-	setWallet: (wallet: Wallet | null) => void
+	setWallet: React.Dispatch<React.SetStateAction<Wallet | null>>
 }
 
 interface IUserContext {
 	user: Partial<User> | null
-	setUser: (user: User | null) => void
+	connected: boolean
+	setUser: React.Dispatch<React.SetStateAction<User | null>>
 }

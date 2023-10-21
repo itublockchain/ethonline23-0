@@ -1,80 +1,68 @@
 "use client"
 
-import { UserContext, WalletContext } from "@/context"
-import { useContext, useEffect } from "react"
+import { UserContext } from "@/context"
+import { use, useContext, useEffect, useState } from "react"
 import { useWeb3Auth } from "./hooks"
-import { useToast } from "./ui/use-toast"
+import Image from "next/image"
+import { Button } from "./ui/button"
+import { usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
+
 interface NavbarProps {}
 
 const Navbar = ({}: NavbarProps) => {
-	const { user, setUser } = useContext(UserContext) as IUserContext
-	const { wallet, setWallet } = useContext(WalletContext) as IWalletContext
-	const { web3AuthPack } = useWeb3Auth()
-	const { toast } = useToast()
+	const [loading, setLoading] = useState(true)
 
-	const login = () => {
-		if (!web3AuthPack) {
-			return
+	const pathName = usePathname()
+
+	const { user, connected } = useContext(UserContext) as IUserContext
+	const { logout, login, web3AuthPack } = useWeb3Auth()
+
+	const router = useRouter()
+
+	useEffect(() => {
+		if (web3AuthPack) {
+			setLoading(false)
+			if (connected) {
+				console.log("connected")
+				login()
+			}
 		}
-		web3AuthPack
-			.signIn()
-			.then((wallets) => {
-				setWallet(wallets as Wallet)
-			})
-			.catch((err) => {
-				toast({
-					title: "Error",
-					description: err.message,
-					duration: 3000,
-				})
-			})
-			.then(() => {
-				web3AuthPack
-					.getUserInfo()
-					.then((userInfo) => {
-						setUser(userInfo as User)
-					})
-					.catch((err) => {
-						toast({
-							title: "Error",
-							description: err.message,
-							duration: 3000,
-						})
-					})
-			})
-	}
+	}, [web3AuthPack])
 
-	const logout = () => {
-		if (!web3AuthPack) {
-			return
+	useEffect(() => {
+		if (user) {
+			router.push("/games")
 		}
-		web3AuthPack
-			.signOut()
-			.then(() => {
-				setWallet(null)
-			})
-			.catch((err) => {
-				toast({
-					title: "Error",
-					description: err.message,
-					duration: 3000,
-				})
-			})
-			.then(() => {
-				setUser(null)
-			})
-			.catch((err) => {
-				toast({
-					title: "Error",
-					description: err.message,
-					duration: 3000,
-				})
-			})
-	}
+	}, [user])
 
-	useEffect(() => {}, [])
+	const isMainPage = pathName === "/"
 
-	return <div></div>
+	return (
+		<>
+			{!isMainPage && (
+				<div className="flex justify-between h-20 bg-jade-9 w-screen py-4 pr-12 pl-6">
+					<Image src="/logo.png" alt="logo" width={80} height={50} />
+					<div className="flex items-center justify-center gap-2">
+						{!loading && (
+							<Button
+								variant="outline"
+								onClick={() => {
+									if (user) {
+										logout()
+									} else {
+										login()
+									}
+								}}
+							>
+								{user ? "Logout" : "Login"}
+							</Button>
+						)}
+					</div>
+				</div>
+			)}
+		</>
+	)
 }
 
 export default Navbar
