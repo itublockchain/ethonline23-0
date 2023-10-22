@@ -99,7 +99,7 @@ const NFT: React.FC<NFTProps> = ({ image, name, rented }) => {
     );
 };
 
-// Ana sayfa bileşeni
+// Main page component
 const Marketplace: React.FC = () => {
 
 	let tokenId =4
@@ -127,7 +127,7 @@ const Marketplace: React.FC = () => {
 	const handleMintApeCoin = async () => {
 
         try {
-			// main accounta 100*10^18 ape mintle
+			// main account 100*10^18 ape mint
             await mintApeCoin(mainAccount.address,"100");
             console.log('Minting ApeCoin successful.');
         } catch (error) {
@@ -139,7 +139,7 @@ const Marketplace: React.FC = () => {
 
 
 
-    // Resim URL'lerini içeren bir dizi
+    // APE URL
     const imageUrls = [
         "https://ipfs.io/ipfs/QmcJYkCKK7QPmYWjp4FD2e3Lv5WCGFuHNUByvGKBaytif4",
         "https://ipfs.io/ipfs/QmXEqPbvM4aq1SQSXN8DSuEcSo5SseYW1izYQbsGB8yn9x",
@@ -173,9 +173,9 @@ const Marketplace: React.FC = () => {
     return (
         <div className="marketplace bg-[#2A7E68]">
             <h1>MARKETPLACE</h1>
-            <button onClick={handleMint}>Mint Mock BAYC</button>  {/* Mint butonu */}
-			<button onClick={handleListForRent}>  .     Kiraya ver BAYC</button>  {/* Kiraya verme butonu */}
-			<button onClick={handleMintApeCoin}>  .     Ape Coin Mintle</button>  {/* Kiraya verme butonu */}
+            <button onClick={handleMint}>Mint Mock BAYC</button>
+			<button onClick={handleListForRent}>  .     Kiraya ver BAYC</button>
+			<button onClick={handleMintApeCoin}>  .     Ape Coin Mintle</button>  
 
             <div className="nft-grid">
                 {nfts.map((nft, index) => (

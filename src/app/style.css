@@ -25,11 +25,18 @@
     position: relative;
     cursor: pointer;
     aspect-ratio: 1/1; 
+    transition: transform 0.6s ease-in-out, box-shadow 0.3s ease-in-out;
+
 }
 
 .nft img {
     width: 100%;
     display: block;
+}
+.nft:hover {
+    transform: scale(1.1);
+    z-index: 1;  
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);  
 }
 
 .rented {
@@ -68,7 +75,7 @@
 }
 
 .popup-content {
-    position: relative;  /* Bu satırı ekleyin */
+    position: relative; 
     background-color: #29A383;
     display: flex;
     align-items: center;
@@ -81,9 +88,9 @@
 .popup-image {
     height: 80%;
     aspect-ratio: 1/1;
-    display: flex;  /* Resmi dikey olarak ortalamak için */
-    justify-content: center;  /* Resmi dikey olarak ortalamak için */
-    align-items: center;  /* Resmi dikey olarak ortalamak için */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
     margin-left:5%
 }
 
@@ -92,11 +99,11 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;  /* Yatay olarak ortalamak için */
+    align-items: center; 
     padding: 20px;
     font-size: 40px;
     color: white;
-    text-align: center;  /* Yazıyı yatay olarak ortalamak için */
+    text-align: center;
 }
 .popup-details button {
     height: 40%;
@@ -106,8 +113,8 @@
     border: none;
     cursor: pointer;
     font-size: 40px;
-    width: 100%;  /* Buton genişliği belirlemek için */
-    margin: 0 auto;  /* Butonu yatay olarak ortalamak için */
+    width: 100%; 
+    margin: 0 auto; 
 }
 .popup-details button:active {
     background-color: white;
@@ -129,6 +136,6 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #2A7E68; /* Arka plan rengini belirleyin */
-    min-height: 100vh; /* Sayfa yüksekliğini belirleyin */
+    background-color: #2A7E68; 
+    min-height: 100vh;
 }
