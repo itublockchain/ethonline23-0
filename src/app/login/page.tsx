@@ -15,6 +15,7 @@ import { clientConfig } from "@/config"
 import SafeApiKit from "@safe-global/api-kit"
 import { mintApeCoin, sendGoerliEther } from "@/lib/ethereum"
 import { Stripe } from "@/components"
+import { Button } from "@/components/ui/button"
 
 export default function Home() {
 	const [safeDeploying, setSafeDeploying] = useState(false)
@@ -77,7 +78,7 @@ export default function Home() {
 		if (testing == "0x") {
 			await sendGoerliEther(eoaAddress)
 			//TODO: CONTROL IT
-			await mintApeCoin(safeAddress, "1000")
+			await mintApeCoin()
 			console.log("100 APE Minted")
 
 			const safeFactory = await SafeFactory.create({ ethAdapter })
@@ -92,9 +93,18 @@ export default function Home() {
 	}
 
 	return (
-		<div className="w-full h-full bg-jade-8 min-h-screen">
+		<div className="w-screen h-screen flex flex-col items-center justify-center bg-jade-8 min-h-screen gap-4">
 			{safeDeploying && <LoadingIndicator width={320} height={320} />}
-
+			{wallet?.safes![0] && (
+				<Button
+					onClick={() => {
+						mintApeCoin()
+					}}
+					variant={"outline"}
+				>
+					Mint
+				</Button>
+			)}
 			{wallet?.safes![0] && <Stripe address={wallet?.safes[0]} />}
 		</div>
 	)

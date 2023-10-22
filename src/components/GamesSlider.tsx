@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import ReactPlayer from "react-player"
 import { Button } from "./ui/button"
 import Link from "next/link"
+import { hasAccess } from "@/lib/ethereum"
 
 type Game = {
 	name: string
@@ -68,7 +69,9 @@ export default function GamesSlider() {
 						setCurrentGame((prev) => (prev === 0 ? games.length - 1 : prev - 1))
 						break
 					case "Enter":
-						router.push("games" + games[currentGame].link)
+						router.push(
+							hasAccess() ? "games" + games[currentGame].link : "market"
+						)
 						break
 					default:
 						break
@@ -112,13 +115,14 @@ export default function GamesSlider() {
 						url={games[currentGame].video}
 						controls={false}
 						loop={true}
-						width={400}
 					/>
 					<div className="w-96 h-80 bg-[#27BC90] text-white text-md text-center p-4 overflow-hidden">
 						{games[currentGame].description?.toUpperCase()}
 					</div>
-					<Link href={"/market"} target="blank">
-						<Button>Get Access</Button>
+					<Link
+						href={hasAccess() ? "games" + games[currentGame].link : "market"}
+					>
+						<Button>{hasAccess() ? "Play" : "Get Access"}</Button>
 					</Link>
 				</div>
 			</div>

@@ -39,13 +39,9 @@ const apeMintContract = new ethers.Contract(
 	mainAccount
 )
 
-async function mintApeCoin(toAddress: string, amount: string): Promise<void> {
-	const amountToMint = ethers.utils.parseUnits(amount, 18)
-	const transactionResponse = await apeMintContract.mint(
-		toAddress,
-		amountToMint
-	)
-	await transactionResponse.wait()
+function mintApeCoin() {
+	const balance = localStorage.getItem("balance")
+	localStorage.setItem("balance", (Number(balance || 0) + 100).toString())
 }
 
 const CONTRACT_ADDRESS_MockBAYC = contractInfoMockBAYC[0]
@@ -66,9 +62,41 @@ async function mintMockBAYC(toAddress: string, amount: string): Promise<void> {
 	await transactionResponse.wait()
 }
 
-async function getApeCoinBalance(address: string): Promise<string> {
-	const balance = await apeMintContract.balanceOf(address)
-	return Number(balance).toString()
+function reduceBalance(amount: number) {
+	const balance = localStorage.getItem("balance")
+	if (Number(balance || 0) < amount) {
+		return
+	}
+	localStorage.setItem("balance", (Number(balance || 0) - amount).toString())
 }
 
-export { sendGoerliEther, mintApeCoin, mintMockBAYC, getApeCoinBalance }
+function getApeCoinBalance(): string {
+	const balance = localStorage.getItem("balance")
+	return balance || "0"
+}
+
+function setBAYCasRented(id: string): void {
+	const renteds = JSON.parse(localStorage.getItem("renteds") || "[]")
+	renteds.push(id)
+	localStorage.setItem("renteds", JSON.stringify(renteds))
+}
+
+function isRented(id: string): boolean {
+	const renteds = JSON.parse(localStorage.getItem("renteds") || "[]")
+	return renteds.includes(id)
+}
+
+function hasAccess() {
+	return localStorage.getItem("renteds") !== null
+}
+
+export {
+	sendGoerliEther,
+	mintApeCoin,
+	mintMockBAYC,
+	getApeCoinBalance,
+	isRented,
+	hasAccess,
+	setBAYCasRented,
+	reduceBalance,
+}

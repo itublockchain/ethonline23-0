@@ -72,23 +72,21 @@ function Stripe({ address }: { address: string }) {
 	}, [])
 
 	return (
-		<div className="w-screen h-screen flex flex-col items-center justify-center">
-			<Dialog>
-				<DialogTrigger asChild>
-					<Button variant="default" onClick={handleCreateSession}>
-						Fund your safe account
-					</Button>
-				</DialogTrigger>
-				<DialogContent className="text-white">
-					<DialogHeader>
-						<DialogTitle>Send USDC to your safe account</DialogTitle>
-						<DialogDescription>
-							<div id="stripe-root" ref={stripeRootRef}></div>
-						</DialogDescription>
-					</DialogHeader>
-				</DialogContent>
-			</Dialog>
-		</div>
+		<Dialog>
+			<DialogTrigger asChild>
+				<Button variant="default" onClick={handleCreateSession}>
+					Fund your safe account
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="text-white">
+				<DialogHeader>
+					<DialogTitle>Send USDC to your safe account</DialogTitle>
+					<DialogDescription>
+						<div id="stripe-root" ref={stripeRootRef}></div>
+					</DialogDescription>
+				</DialogHeader>
+			</DialogContent>
+		</Dialog>
 	)
 }
 

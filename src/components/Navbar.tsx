@@ -34,15 +34,11 @@ const Navbar = ({}: NavbarProps) => {
 
 	useEffect(() => {
 		if (wallet?.safes[0]) {
-			console.log("getting balance")
-			getApeCoinBalance(wallet?.safes[0])
-				.then((balance: string) => {
-					console.log(balance)
-					setBalance(balance)
-				})
-				.catch((err) => {
-					console.log(err)
-				})
+			setInterval(() => {
+				const balance = getApeCoinBalance()
+				console.log("balance", balance)
+				setBalance(balance)
+			}, 1000)
 		}
 	}, [wallet])
 
