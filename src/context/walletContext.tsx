@@ -15,11 +15,19 @@ const WalletProvider: React.FC<{ children: React.ReactNode }> = ({
 		)
 	}, [])
 
+	function addSafe(safe: string) {
+		if (!wallet) return
+		const newWallet = { ...wallet }
+		newWallet.safes?.push(safe)
+		setWallet(newWallet)
+	}
+
 	return (
 		<WalletContext.Provider
 			value={{
 				wallet,
 				setWallet,
+				addSafe,
 			}}
 		>
 			{children}
