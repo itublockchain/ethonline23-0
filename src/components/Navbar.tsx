@@ -11,53 +11,67 @@ import { useRouter } from "next/navigation"
 interface NavbarProps {}
 
 const Navbar = ({}: NavbarProps) => {
-	const [loading, setLoading] = useState(true)
-
 	const pathName = usePathname()
 
 	const { user, connected } = useContext(UserContext) as IUserContext
-	const { logout, login, web3AuthPack } = useWeb3Auth()
+	const { logout, login, loading } = useWeb3Auth()
 
 	const router = useRouter()
 
 	useEffect(() => {
-		if (web3AuthPack) {
-			setLoading(false)
-			if (connected) {
-				console.log("connected")
-				login()
-			}
+		console.log(loading)
+		if (connected) {
+			console.log("connected")
+			login()
 		}
-	}, [web3AuthPack])
-
-	useEffect(() => {
-		if (user) {
-			router.push("/games")
-		}
-	}, [user])
+	}, [loading])
 
 	const isMainPage = pathName === "/"
 
 	return (
 		<>
 			{!isMainPage && (
-				<div className="flex justify-between h-20 bg-jade-9 w-screen py-4 pr-12 pl-6">
-					<Image src="/logo.png" alt="logo" width={80} height={50} />
+				<div className="flex justify-between h-20 bg-jade-9 w-screen py-4 pr-12 pl-6 fixed top-0 z-10">
+					<Image
+						src="/logo.png"
+						alt="logo"
+						width={60}
+						height={60}
+						onClick={() => {
+							router.push("/")
+						}}
+					/>
 					<div className="flex items-center justify-center gap-2">
-						{!loading && (
-							<Button
-								variant="outline"
-								onClick={() => {
-									if (user) {
-										logout()
-									} else {
-										login()
-									}
-								}}
-							>
-								{user ? "Logout" : "Login"}
-							</Button>
-						)}
+						<Button
+							variant="link"
+							onClick={() => {
+								router.push("/market")
+							}}
+						>
+							Market
+						</Button>
+
+						<Button
+							variant="link"
+							onClick={() => {
+								router.push("/games")
+							}}
+						>
+							Games
+						</Button>
+
+						<Button
+							variant="outline"
+							onClick={() => {
+								if (user) {
+									logout()
+								} else {
+									login()
+								}
+							}}
+						>
+							{user ? "Logout" : "Login"}
+						</Button>
 					</div>
 				</div>
 			)}

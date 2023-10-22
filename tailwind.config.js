@@ -62,20 +62,7 @@ module.exports = {
 				11: "var(--jade-11)",
 				12: "var(--jade-12)",
 			},
-			sage: {
-				1: "var(--sage-1)",
-				2: "var(--sage-2)",
-				3: "var(--sage-3)",
-				4: "var(--sage-4)",
-				5: "var(--sage-5)",
-				6: "var(--sage-6)",
-				7: "var(--sage-7)",
-				8: "var(--sage-8)",
-				9: "var(--sage-9)",
-				10: "var(--sage-10)",
-				11: "var(--sage-11)",
-				12: "var(--sage-12)",
-			},
+
 			red: {
 				1: "var(--red-1)",
 				2: "var(--red-2)",
@@ -92,15 +79,15 @@ module.exports = {
 			},
 			// provide colors to shadcn/ui
 			/* Default border color */
-			border: "var(--sage-6)", // Radix suggests 6 for "Subtle borders on components which are not interactive.
+			border: "var(--jade-6)", // Radix suggests 6 for "Subtle borders on components which are not interactive.
 			// "[...] For example sidebars, headers, cards, alerts, and separators."
 			/* Border color for inputs such as <Input />, <Select />, <Textarea /> */
-			input: "var(--sage-7)", // Radix suggests 6 for "Borders on interactive components."
+			input: "var(--jade-7)", // Radix suggests 6 for "Borders on interactive components."
 			/* Used for focus ring */
 			ring: "var(--jade-7)", // Radix suggests 7 for "UI element border and focus rings"
 			/* Default background color of <body />...etc */
-			background: "var(--sage-1)", // Radix suggests 1 for "App background"
-			foreground: "var(--sage-11)", // Radix suggests 11 for "Low-contrast text"
+			background: "var(--jade-1)", // Radix suggests 1 for "App background"
+			foreground: "var(--jade-11)", // Radix suggests 11 for "Low-contrast text"
 			/* Primary colors for <Button /> */
 			primary: {
 				DEFAULT: "var(--jade-12)", // has a the best contrast still having a jade clue
@@ -118,24 +105,24 @@ module.exports = {
 			},
 			/* Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch /> */
 			muted: {
-				DEFAULT: "var(--sage-3)", // Not sure
-				foreground: "var(--sage-9)", // Not sure
+				DEFAULT: "var(--jade-3)", // Not sure
+				foreground: "var(--jade-9)", // Not sure
 			},
 			/* Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc */
 			/* Note: These are also used for ghost buttons */
 			accent: {
 				DEFAULT: "var(--jade-4)", // Radix suggests 4 for "Hovered UI element background"
-				foreground: "var(--sage-11)", // Using the default foreground
+				foreground: "var(--jade-11)", // Using the default foreground
 			},
 			/* Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover /> */
 			popover: {
-				DEFAULT: "var(--sage-2)", // Radix suggests 2 for "Subtle background"
-				foreground: "var(--sage-12)", // Radix suggests 12 for "High-contrast text"
+				DEFAULT: "var(--jade-2)", // Radix suggests 2 for "Subtle background"
+				foreground: "var(--jade-12)", // Radix suggests 12 for "High-contrast text"
 			},
 			/* Background color for <Card /> */
 			card: {
-				DEFAULT: "var(--sage-3)", // Radix suggests 3 for "UI element background"
-				foreground: "var(--sage-11)", // Using the default foreground
+				DEFAULT: "var(--jade-3)", // Radix suggests 3 for "UI element background"
+				foreground: "var(--jade-11)", // Using the default foreground
 			},
 		},
 	},

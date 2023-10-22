@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useWeb3Auth } from "@/components/hooks"
 
 export default function Landing() {
 	const router = useRouter()
@@ -50,7 +51,7 @@ export default function Landing() {
 
 	return (
 		<>
-			<div className="w-full h-screen bg-jade-8 flex justify-center items-center p-8">
+			<div className="w-full h-screen bg-jade-8 flex justify-center items-center p-8 top-0 absolute">
 				<div className="w-full h-full flex justify-center items-center p-8 bg-jade-9">
 					<div className="w-full h-full bg-jade-10 flex flex-col justify-around">
 						<div className="flex justify-around">
@@ -63,7 +64,9 @@ export default function Landing() {
 						</div>
 						<div className="flex flex-col justify-center items-center">
 							<Button
-								onClick={() => router.push("/login")}
+								onClick={() => {
+									router.push("/login")
+								}}
 								variant="link"
 								className={
 									"w-72 text-3xl text-white " +
@@ -73,7 +76,9 @@ export default function Landing() {
 								CREATE AN ACCOUNT
 							</Button>
 							<Button
-								onClick={() => router.push("/login")}
+								onClick={() => {
+									router.push("/login")
+								}}
 								variant="link"
 								className={
 									"w-72 text-3xl text-white " +

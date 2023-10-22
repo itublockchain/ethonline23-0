@@ -14,10 +14,6 @@ const games: Game[] = [
 	{ name: "deneme3", description: "deneme3 description", link: "/flappy-bird" },
 	{ name: "deneme4", description: "deneme4 description", link: "/flappy-bird" },
 	{ name: "deneme5", description: "deneme5 description", link: "/flappy-bird" },
-	{ name: "deneme6", description: "deneme6 description", link: "/flappy-bird" },
-	{ name: "deneme7", description: "deneme7 description", link: "/flappy-bird" },
-	{ name: "deneme8", description: "deneme8 description", link: "/flappy-bird" },
-	{ name: "deneme9", description: "deneme9 description", link: "/flappy-bird" },
 ]
 
 export default function GamesSlider() {
@@ -37,7 +33,7 @@ export default function GamesSlider() {
 						setCurrentGame((prev) => (prev === 0 ? games.length - 1 : prev - 1))
 						break
 					case "Enter":
-						router.push(games[currentGame].link)
+						router.push("games" + games[currentGame].link)
 						break
 					default:
 						break
@@ -60,7 +56,7 @@ export default function GamesSlider() {
 
 	return (
 		<>
-			<div className="w-full h-5/6 flex justify-around items-center bg-[#20A17A]">
+			<div className="w-full h-5/6 flex justify-around items-center bg-green-12">
 				<ul className="flex flex-col text-[32px]">
 					{games.map((game, index) => (
 						<li
@@ -69,7 +65,7 @@ export default function GamesSlider() {
 							}}
 							key={index}
 							className={`${
-								currentGame === index ? "text-[#27BC90]" : "text-white"
+								currentGame === index ? "text-green-8" : "text-white"
 							} hover:cursor-pointer`}
 						>
 							Game {index + 1}: {game.name.toUpperCase()}

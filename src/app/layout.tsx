@@ -23,10 +23,14 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="dark">
 			<body className={VT323Font.className}>
-				<ContextProvider>
-					<Navbar />
-					{children}
-				</ContextProvider>
+				<div className="bg-jade-1 flex items-center justify-center">
+					<ContextProvider>
+						<Navbar />
+						<div className="w-full h-full flex flex-col justify-center items-center mt-20">
+							{children}
+						</div>
+					</ContextProvider>
+				</div>
 			</body>
 		</html>
 	)

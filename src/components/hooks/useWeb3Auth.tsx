@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useEffect, useState } from "react"
+import { use, useContext, useEffect, useState } from "react"
 import {
 	Web3AuthModalPack,
 	Web3AuthConfig,
@@ -65,12 +65,12 @@ const connectedHandler: Web3AuthEventListener = (data) =>
 	console.log("CONNECTED", data)
 const disconnectedHandler: Web3AuthEventListener = (data) =>
 	console.log("DISCONNECTED", data)
+const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig)
 
 function useWeb3Auth() {
-	const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig)
 	// Instantiate and initialize the pack
 	const provider = web3AuthModalPack.getProvider() as SafeEventEmitterProvider
-	const [web3AuthPack, setWeb3AuthPack] = useState<Web3AuthModalPack | null>()
+	const [loading, setLoading] = useState<boolean>(true)
 
 	const { setUser } = useContext(UserContext) as IUserContext
 	const { setWallet } = useContext(WalletContext) as IWalletContext
@@ -80,7 +80,7 @@ function useWeb3Auth() {
 	const router = useRouter()
 
 	const login = () => {
-		web3AuthPack
+		web3AuthModalPack
 			?.signIn()
 			.then((wallets) => {
 				setWallet(wallets as Wallet)
@@ -93,7 +93,7 @@ function useWeb3Auth() {
 				})
 			})
 			.then(() => {
-				web3AuthPack
+				web3AuthModalPack
 					.getUserInfo()
 					.then((userInfo) => {
 						console.log(userInfo)
@@ -110,7 +110,7 @@ function useWeb3Auth() {
 	}
 
 	const logout = () => {
-		web3AuthPack
+		web3AuthModalPack
 			?.signOut()
 			.then(() => {
 				setWallet(null)
@@ -136,24 +136,38 @@ function useWeb3Auth() {
 	}
 
 	useEffect(() => {
-		const init = async () => {
-			await web3AuthModalPack.init({
+		setLoading(true)
+
+		web3AuthModalPack
+			.init({
 				options,
 				adapters: [openloginAdapter],
 				modalConfig,
 			})
-		}
-		init().then(() => {
-			web3AuthModalPack.subscribe(ADAPTER_EVENTS.CONNECTED, connectedHandler)
-			web3AuthModalPack.subscribe(
-				ADAPTER_EVENTS.DISCONNECTED,
-				disconnectedHandler
-			)
-			setWeb3AuthPack(web3AuthModalPack)
-		})
+			.then(() => {
+				web3AuthModalPack.subscribe(ADAPTER_EVENTS.CONNECTED, connectedHandler)
+				web3AuthModalPack.subscribe(
+					ADAPTER_EVENTS.DISCONNECTED,
+					disconnectedHandler
+				)
+			})
+			.catch((err) => {
+				toast({
+					title: "Error",
+					description: err.message,
+					duration: 3000,
+				})
+			})
+			.finally(() => {
+				setLoading(false)
+			})
 	}, [])
 
-	return { web3AuthPack, provider, login, logout }
+	useEffect(() => {
+		console.log(loading)
+	}, [loading])
+
+	return { web3AuthModalPack, provider, login, logout, loading }
 }
 
 export default useWeb3Auth

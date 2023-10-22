@@ -1,26 +1,23 @@
-import { GamesSlider } from "@/components";
-import logo from "../../../public/logo.png";
-import Image from "next/image";
-import { VT323 } from "next/font/google";
+import { GamesSlider } from "@/components"
+import logo from "../../../public/logo.png"
+import Image from "next/image"
+import { VT323 } from "next/font/google"
 
 const VT323Font = VT323({
-  weight: "400",
-  style: "normal",
-  subsets: ["latin-ext"],
-});
+	weight: "400",
+	style: "normal",
+	subsets: ["latin-ext"],
+})
 
 export default function Games() {
-  return (
-    <>
-      <div
-        className={`${VT323Font.className} px-8 w-full h-screen flex flex-col justify-center items-center bg-[#088E65]`}
-      >
-        <div className="">
-          <Image src={logo} alt="logo" width={120} className="absolute top-5 left-8" />
-          <h1 className="text-white text-8xl">GAMES</h1>
-        </div>
-        <GamesSlider />
-      </div>
-    </>
-  );
+	return (
+		<>
+			<div className="px-8 w-full h-full flex flex-col justify-center items-center bg-[#088E65]">
+				<div className="">
+					<h1 className="text-white text-8xl">GAMES</h1>
+				</div>
+				<GamesSlider />
+			</div>
+		</>
+	)
 }

@@ -8,7 +8,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog"
-import { useEffect } from "react"
 
 export function EndDialog({
 	gameOver,
