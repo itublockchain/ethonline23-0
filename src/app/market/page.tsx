@@ -5,8 +5,11 @@ require('dotenv').config();
 
 import React, { useState } from 'react';
 import "../style.css"
+import { mintApeCoin } from "../../lib/ethereum";
+ 
 
 const contractInfoMockBAYC: ContractInfo = require('../../constants/MockBAYC-contractInfo.json');
+const contractInfoRentalContract: ContractInfo = require("../../constants/Rental-contractInfo.json")
 
 interface ContractInfo {
 	0: string;
@@ -21,6 +24,7 @@ const mainAccount = new ethers.Wallet(
 	provider
 );
 
+// ***************** Mint MockBAYC ***********************
 const CONTRACT_ADDRESS_MockBAYC = contractInfoMockBAYC[0];
 const CONTRACT_ABI_MockBAYC = contractInfoMockBAYC[1];
 
@@ -38,6 +42,30 @@ async function mintMockBAYC(toAddress: string, amount: number): Promise<void> {
 	);
 	await transactionResponse.wait();
 }
+//**********************************************
+
+//*************** BAYC NFT leasing *************
+
+const CONTRACT_ADDRESS_RentalContract = contractInfoRentalContract[0];
+const CONTRACT_ABI_RentalContract = contractInfoRentalContract[1];
+
+const rentalContract = new ethers.Contract(
+	CONTRACT_ADDRESS_RentalContract,
+	CONTRACT_ABI_RentalContract,
+	mainAccount
+);
+
+async function listForRent(_tokenId: number, _price: number, _duration: number): Promise<void> {
+	const tokenId = _tokenId;
+	const transactionResponse = await rentalContract.listForRent(
+		tokenId,
+		_price,
+		_duration
+	);
+	await transactionResponse.wait();
+}
+//**********************************************
+
 
 
 interface NFTProps {
@@ -85,6 +113,29 @@ const Marketplace: React.FC = () => {
             console.error('Minting unsuccessful:', error);
         }
     }
+	// if you are BAYC holder you can rent your NFT
+	// Main account has BAYC NFTs 
+	const handleListForRent = async () => {
+
+        try {
+            await listForRent(2,10,10000);
+            console.log('Renting successful.');
+        } catch (error) {
+            console.error('Renting unsuccessful:', error);
+        }
+    }
+	const handleMintApeCoin = async () => {
+
+        try {
+			// main accounta 100*10^18 ape mintle
+            await mintApeCoin(mainAccount.address,"100");
+            console.log('Minting ApeCoin successful.');
+        } catch (error) {
+            console.error('Minting ApeCoin unsuccessful:', error);
+        }
+    }
+
+
 
 
 
@@ -123,6 +174,9 @@ const Marketplace: React.FC = () => {
         <div className="marketplace bg-[#2A7E68]">
             <h1>MARKETPLACE</h1>
             <button onClick={handleMint}>Mint Mock BAYC</button>  {/* Mint butonu */}
+			<button onClick={handleListForRent}>  .     Kiraya ver BAYC</button>  {/* Kiraya verme butonu */}
+			<button onClick={handleMintApeCoin}>  .     Ape Coin Mintle</button>  {/* Kiraya verme butonu */}
+
             <div className="nft-grid">
                 {nfts.map((nft, index) => (
                     <NFT key={index} {...nft} />
