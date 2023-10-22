@@ -5,13 +5,13 @@ require("@nomiclabs/hardhat-etherscan")
 
 
 module.exports = {
-  defaultNetwork: "goerli",
+  defaultNetwork: "mumbai",
   networks: {
     hardhat: {
 
     },
-    goerli: {
-      url: "https://eth-goerli.g.alchemy.com/v2/EHD2gQtDUtW4gM6jJ58QcI13oyVzxEm8",
+    mumbai: {
+      url: process.env.MUMBAI_RPC,
       accounts: [process.env.DEPLOYER_KEY],
     }
   },

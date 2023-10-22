@@ -17,6 +17,9 @@ Users' externally owned accounts (EOAs) benefit from an additional layer of secu
 #### Fiat-to-Crypto Gateway via Safe onRamp Kit:
  TAP facilitates the purchase of USDC using credit cards or other sources through the Safe OnRamp Kit, making the transition into digital assets straightforward and accessible.
 
+#### Public Good with Account Abstraction or Gasless transactions on Polygon
+All of our systems(contracts, smart contract wallets(Safe), database etc.) on polygon mumbai. We are utilizing account abstraction and gasless transactions. Also, we are donating half of the prize pool to a charityi its optional.
+
 #### Native Token (APE) Integration: 
 USDC is seamlessly swapped for APE tokens, TAP's native cryptocurrency. APE tokens serve as the primary medium of exchange within the ecosystem, empowering users with a versatile digital currency for all transactions and purchases.
 
