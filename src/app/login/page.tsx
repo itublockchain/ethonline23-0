@@ -92,7 +92,7 @@ export default function Home() {
 	}
 
 	return (
-		<div className="w-full h-full bg-jade-1 min-h-screen">
+		<div className="w-full h-full bg-jade-8 min-h-screen">
 			{safeDeploying && <LoadingIndicator width={320} height={320} />}
 
 			{wallet?.safes![0] && <Stripe address={wallet?.safes[0]} />}

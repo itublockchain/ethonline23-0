@@ -12,7 +12,7 @@ const VT323Font = VT323({
 export default function Games() {
 	return (
 		<>
-			<div className="px-8 w-full h-full flex flex-col justify-center items-center bg-[#088E65]">
+			<div className="px-8 w-full h-full flex flex-col justify-center items-center bg-jade-8 min-h-screen">
 				<div className="">
 					<h1 className="text-white text-8xl">GAMES</h1>
 				</div>

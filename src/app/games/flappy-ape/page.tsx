@@ -11,11 +11,9 @@ const VT323Font = VT323({
 
 export default function FlappyBird() {
 	return (
-		<div
-			className={`${VT323Font.className} px-8 w-full h-fit flex flex-col justify-center items-center bg-[#088E65]`}
-		>
+		<div className="px-8 w-full h-fit flex flex-col justify-center items-center bg-jade-8 min-h-screen">
 			<div className="">
-				<h1 className="text-white text-8xl">FLAPPY BIRD</h1>
+				<h1 className="text-white text-8xl">FLAPPY APE</h1>
 			</div>
 			<Game />
 		</div>

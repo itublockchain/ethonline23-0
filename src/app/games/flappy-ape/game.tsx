@@ -4,6 +4,7 @@ import useEventListener from "@use-it/event-listener"
 import { Circle, Rectangle } from "./types"
 import * as constants from "./constants"
 import { EndDialog } from "./end"
+import { Button } from "@/components/ui/button"
 
 // ground
 let groundX = 0
@@ -240,11 +241,18 @@ export default function Game() {
 				width={constants.CANVAS_WIDTH}
 				height={constants.CANVAS_HEIGHT}
 			/>
-			<EndDialog
-				gameOver={showModal}
-				score={score}
-				bestScore={bestScore}
-			></EndDialog>
+			{showModal && (
+				<div className="flex gap-2 w-full items-center justify-center p-4">
+					<Button disabled>Score: {score}</Button>
+					<Button
+						onClick={() => {
+							window.location.reload()
+						}}
+					>
+						Restart
+					</Button>
+				</div>
+			)}
 		</div>
 	)
 }
