@@ -1,12 +1,24 @@
 "use client"
 
-import { UserContext } from "@/context"
+import { UserContext, WalletContext } from "@/context"
 import { use, useContext, useEffect, useState } from "react"
 import { useWeb3Auth } from "./hooks"
 import Image from "next/image"
 import { Button } from "./ui/button"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/navigation"
+import {
+	NavigationMenu,
+	NavigationMenuContent,
+	NavigationMenuIndicator,
+	NavigationMenuItem,
+	NavigationMenuLink,
+	NavigationMenuList,
+	NavigationMenuTrigger,
+	NavigationMenuViewport,
+} from "@/components/ui/navigation-menu"
+import { shortHandData } from "@/lib/utils"
+import { getApeCoinBalance } from "@/lib/ethereum"
 
 interface NavbarProps {}
 
@@ -15,8 +27,24 @@ const Navbar = ({}: NavbarProps) => {
 
 	const { user, connected } = useContext(UserContext) as IUserContext
 	const { logout, login, loading } = useWeb3Auth()
+	const { wallet } = useContext(WalletContext) as IWalletContext
+	const [balance, setBalance] = useState<string>("0")
 
 	const router = useRouter()
+
+	useEffect(() => {
+		if (wallet?.safes[0]) {
+			console.log("getting balance")
+			getApeCoinBalance(wallet?.safes[0])
+				.then((balance: string) => {
+					console.log(balance)
+					setBalance(balance)
+				})
+				.catch((err) => {
+					console.log(err)
+				})
+		}
+	}, [wallet])
 
 	useEffect(() => {
 		console.log(loading)
@@ -59,19 +87,49 @@ const Navbar = ({}: NavbarProps) => {
 						>
 							Games
 						</Button>
-
-						<Button
-							variant="outline"
-							onClick={() => {
-								if (user) {
-									logout()
-								} else {
-									login()
-								}
-							}}
-						>
-							{user ? "Logout" : "Login"}
-						</Button>
+						<>
+							{user ? (
+								<NavigationMenu>
+									<NavigationMenuList>
+										<NavigationMenuItem>
+											<NavigationMenuTrigger>
+												{shortHandData(wallet?.safes[0])}
+											</NavigationMenuTrigger>
+											<NavigationMenuContent asChild>
+												<Button
+													variant="outline"
+													onClick={() => {
+														if (user) {
+															logout()
+														} else {
+															login()
+														}
+													}}
+												>
+													{user ? "Logout" : "Login"}
+												</Button>
+											</NavigationMenuContent>
+										</NavigationMenuItem>
+										<NavigationMenuItem>
+											Balance: {balance} APE
+										</NavigationMenuItem>
+									</NavigationMenuList>
+								</NavigationMenu>
+							) : (
+								<Button
+									variant="outline"
+									onClick={() => {
+										if (user) {
+											logout()
+										} else {
+											login()
+										}
+									}}
+								>
+									{user ? "Logout" : "Login"}
+								</Button>
+							)}
+						</>
 					</div>
 				</div>
 			)}

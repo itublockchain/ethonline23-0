@@ -86,7 +86,7 @@ module.exports = {
 			/* Used for focus ring */
 			ring: "var(--jade-7)", // Radix suggests 7 for "UI element border and focus rings"
 			/* Default background color of <body />...etc */
-			background: "var(--jade-1)", // Radix suggests 1 for "App background"
+			background: "var(--jade-6)", // Radix suggests 1 for "App background"
 			foreground: "var(--jade-11)", // Radix suggests 11 for "Low-contrast text"
 			/* Primary colors for <Button /> */
 			primary: {

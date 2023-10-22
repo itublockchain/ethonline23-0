@@ -76,7 +76,7 @@ function Stripe({ address }: { address: string }) {
 			<Dialog>
 				<DialogTrigger asChild>
 					<Button variant="default" onClick={handleCreateSession}>
-						Create session
+						Fund your safe account
 					</Button>
 				</DialogTrigger>
 				<DialogContent className="text-white">

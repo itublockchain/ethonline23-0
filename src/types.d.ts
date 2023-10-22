@@ -31,6 +31,7 @@ type Wallet = {
 type IWalletContext = {
 	wallet: Wallet | null
 	setWallet: React.Dispatch<React.SetStateAction<Wallet | null>>
+	addSafe: (safe: string) => void
 }
 
 interface IUserContext {
