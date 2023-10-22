@@ -201,8 +201,8 @@ export default function ExampleComponent() {
 			if (testing == "0x") {
 				await sendGoerliEther(eoaAddress);
 				//TODO: CONTROL IT
-				await mintApeCoin(safeAddress, "100");
-				console.log("100 APE Minted");
+				await mintApeCoin(safeAddress, "1000");
+				console.log("1000 APE Minted");
 
 				const safeFactory = await SafeFactory.create({ ethAdapter });
 				const safeSdk: Safe = await safeFactory.deploySafe({

@@ -6,6 +6,7 @@ require('dotenv').config();
 import React, { useState } from 'react';
 import "../style.css"
 import { mintApeCoin } from "../../lib/ethereum";
+import { ZodNumberCheck } from 'zod';
  
 
 const contractInfoMockBAYC: ContractInfo = require('../../constants/MockBAYC-contractInfo.json');
@@ -34,11 +35,9 @@ const mockBAYCContract = new ethers.Contract(
 	mainAccount
 );
 
-async function mintMockBAYC(toAddress: string, amount: number): Promise<void> {
-	const amountToMint = amount;
+async function mintMockBAYC(toAddress: string): Promise<void> {
 	const transactionResponse = await mockBAYCContract.mint(
-		toAddress,
-		amountToMint
+		toAddress
 	);
 	await transactionResponse.wait();
 }
@@ -66,6 +65,26 @@ async function listForRent(_tokenId: number, _price: number, _duration: number):
 }
 //**********************************************
 
+async function rent(_tokenId: number): Promise<void> {
+	const tokenId = _tokenId;
+	const transactionResponse = await rentalContract.rent(
+		tokenId
+	);
+	await transactionResponse.wait();
+}
+
+const handleRent = async () => {
+
+	try {
+		// TODO: Rent tokenURI 1
+		console.log("sending tx processing")
+		await rent(1);
+		console.log('Renting tokenURI successful.');
+	} catch (error) {
+		console.error('Renting tokenURI  unsuccessful:', error);
+	}
+}
+
 
 
 interface NFTProps {
@@ -90,7 +109,7 @@ const NFT: React.FC<NFTProps> = ({ image, name, rented }) => {
                         <img src={image} alt={name} className="popup-image" />
                         <div className="popup-details">
                             <h2>{name}</h2>
-                            <button>Rent for 10 APE</button>
+                            <button onClick={() => handleRent()}>Rent for 10 APE</button>
                         </div>
                     </div>
                 </div>
@@ -102,13 +121,11 @@ const NFT: React.FC<NFTProps> = ({ image, name, rented }) => {
 // Main page component
 const Marketplace: React.FC = () => {
 
-	let tokenId =4
 	const handleMint = async () => {
         const toAddress = mainAccount.address;
         try {
-            await mintMockBAYC(toAddress, tokenId);
+            await mintMockBAYC(toAddress);
             console.log('Minting successful.');
-			tokenId++;
         } catch (error) {
             console.error('Minting unsuccessful:', error);
         }
@@ -118,7 +135,7 @@ const Marketplace: React.FC = () => {
 	const handleListForRent = async () => {
 
         try {
-            await listForRent(2,10,10000);
+            await listForRent(1,10,10000);
             console.log('Renting successful.');
         } catch (error) {
             console.error('Renting unsuccessful:', error);
@@ -134,6 +151,8 @@ const Marketplace: React.FC = () => {
             console.error('Minting ApeCoin unsuccessful:', error);
         }
     }
+
+	
 
 
 

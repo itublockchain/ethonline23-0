@@ -46,12 +46,15 @@ contract RentalContract {
     }
 
     // Function to list an ERC721 token for rent with price and duration.
+    // Function to list an ERC721 token for rent with price and duration.
     function listForRent(
         uint256 tokenId,
         uint256 price,
         uint256 duration
     ) external {
-        require(bayc.ownerOf(tokenId) == msg.sender, "Not owner"); // Ensure caller is the owner of the token
+        if(bayc.ownerOf(tokenId) != msg.sender) {
+            revert("ErrorListForRent__NotOwner");
+        }
         rentals[tokenId] = Rental({
             owner: msg.sender,
             renter: address(0),
@@ -67,20 +70,25 @@ contract RentalContract {
     }
 
     // Function to rent an ERC721 token listed for rent.
+    // Function to rent an ERC721 token listed for rent.
     function rent(uint256 tokenId) external {
         Rental storage rental = rentals[tokenId]; // Get rental info
-        require(rental.owner != address(0), "Not listed"); // Ensure token is listed for rent
-        require(rental.renter == address(0), "Already rented"); // Ensure token is not already rented
+        // if(rental.owner == address(0)) {
+        //     revert("ErrorRent__NotListed");
+        // }
+        // if(rental.renter != address(0)) {
+        //     revert("ErrorRent__AlreadyRented");
+        // }
 
         // Transfer half of the rental price to the owner and the other half to the vault.
-        require(
-            apeCoin.transferFrom(msg.sender, rental.owner, rental.price / 2),
-            "Payment failed"
-        );
-        require(
-            apeCoin.transferFrom(msg.sender, vaultAddress, rental.price / 2),
-            "Payment to vault failed"
-        );
+        bool paymentToOwner = apeCoin.transferFrom(msg.sender, rental.owner, rental.price / 2);
+        bool paymentToVault = apeCoin.transferFrom(msg.sender, vaultAddress, rental.price / 2);
+        if(!paymentToOwner) {
+            revert("ErrorRent__PaymentFailed");
+        }
+        if(!paymentToVault) {
+            revert("ErrorRent__PaymentToVaultFailed");
+        }
         rental.renter = msg.sender; // Update renter
         emit RentalStarted(tokenId, msg.sender); // Emit event
     }
