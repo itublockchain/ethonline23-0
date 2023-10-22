@@ -10,8 +10,8 @@ export const CLOUDS_X = 0
 export const CLOUDS_Y = 0
 
 // bird
-export const BIRD_HEIGHT = 50
-export const BIRD_WIDTH = 50
+export const BIRD_HEIGHT = 100
+export const BIRD_WIDTH = 100
 
 // ground
 export const GROUND_HEIGHT = 200
