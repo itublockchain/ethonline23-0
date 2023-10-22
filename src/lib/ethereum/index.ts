@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import { clientConfig } from "@/config";
 require("dotenv").config();
 const contractInfoApeERC20: ContractInfo = require("../../constants/ApeERC20-contractInfo.json");
+const contractInfoMockBAYC: ContractInfo = require("../../constants/MockBAYC-contractInfo.json");
 
 interface ContractInfo {
 	0: string;
@@ -29,12 +30,12 @@ async function sendGoerliEther(toAddress: string): Promise<void> {
 	await transactionResponse.wait();
 }
 
-const CONTRACT_ADDRESS = contractInfoApeERC20[0];
-const CONTRACT_ABI = contractInfoApeERC20[1];
+const CONTRACT_ADDRESS_ApeERC20 = contractInfoApeERC20[0];
+const CONTRACT_ABI_ApeERC20 = contractInfoApeERC20[1];
 
 const apeMintContract = new ethers.Contract(
-	CONTRACT_ADDRESS,
-	CONTRACT_ABI,
+	CONTRACT_ADDRESS_ApeERC20,
+	CONTRACT_ABI_ApeERC20,
 	mainAccount
 );
 
@@ -47,4 +48,22 @@ async function mintApeCoin(toAddress: string, amount: string): Promise<void> {
 	await transactionResponse.wait();
 }
 
-export { sendGoerliEther, mintApeCoin };
+const CONTRACT_ADDRESS_MockBAYC = contractInfoMockBAYC[0];
+const CONTRACT_ABI_MockBAYC = contractInfoMockBAYC[1];
+
+const mockBAYCContract = new ethers.Contract(
+	CONTRACT_ADDRESS_MockBAYC,
+	CONTRACT_ABI_MockBAYC,
+	mainAccount
+);
+
+async function mintMockBAYC(toAddress: string, amount: string): Promise<void> {
+	const amountToMint = 1;
+	const transactionResponse = await mockBAYCContract.mint(
+		mainAccount.address,
+		amountToMint
+	);
+	await transactionResponse.wait();
+}
+
+export { sendGoerliEther, mintApeCoin, mintMockBAYC };
