@@ -86,10 +86,7 @@ contract RentalContract {
     }
 
     // Function to end all rentals and make all NFTs available for rent again.
-    // Function to end all rentals and make all NFTs available for rent again.
     function endAllRentals() external {
-        // Iterate through all possible token IDs (assuming a maximum tokenId for simplicity)
-        // Note: You would need to adapt this to match the actual total supply of your NFTs.
         for (uint256 tokenId = 1; tokenId <= 20; tokenId++) {
             // Check if a rental exists for the current tokenId
             if (rentals[tokenId].owner != address(0)) {
